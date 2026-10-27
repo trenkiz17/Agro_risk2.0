@@ -1,10 +1,150 @@
-# AgroRisk
+<div align="center">
 
-Pequenos e médios produtores rurais enfrentam dificuldades para centralizar e organizar informações sobre suas propriedades, safras e atividades agrícolas. Essa falta de organização pode prejudicar o acompanhamento das lavouras, o planejamento de plantio e colheita e a tomada de decisões.
+# 🌱 AgroRisk
 
-O **AgroRisk** foi desenvolvido como projeto acadêmico de TCC para auxiliar na gestão agrícola. A plataforma permite cadastrar usuários, propriedades e safras, visualizar áreas em mapas, consultar dados meteorológicos reais e acompanhar **janelas estimadas de colheita**. O sistema também apresenta análises de safras, permite confirmar a conclusão de uma colheita e exportar informações em PDF.
+### Plataforma de gestão e monitoramento agrícola
 
-> **Versão documentada:** AgroRisk para demonstração acadêmica em 23/10/2026, executado pelo Flask com páginas em `backend/templates/` e CSS, JavaScript e imagens em `backend/static/`. Os itens apresentados foram identificados na versão atual do código. A gravação do vídeo e os testes no computador da equipe devem confirmar cada fluxo de ponta a ponta.
+**TCC • Técnico em Informática • 2026**
+
+![Python](https://img.shields.io/badge/Python-Backend-3776AB?logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-API-1B5E20?logo=flask&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-Banco_de_Dados-4479A1?logo=mysql&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-Frontend-F7DF1E?logo=javascript&logoColor=black)
+![Status](https://img.shields.io/badge/Status-Em_desenvolvimento-F5A623)
+
+**Propriedades • Mapas • Safras • Clima • Monitoramento • Relatórios em PDF**
+
+</div>
+
+---
+
+## 📌 Sobre o projeto
+
+Pequenos e médios produtores rurais precisam reunir informações sobre áreas, propriedades, plantio, colheita e condições do tempo para tomar decisões mais bem informadas. O **AgroRisk** é uma aplicação web acadêmica para organizar esses dados em um só lugar.
+
+A plataforma integra **Flask + MySQL** com mapas interativos (**Leaflet/OpenStreetMap**), busca de endereços (**Nominatim**), consultas meteorológicas (**OpenWeather**), indicadores gerenciais, acompanhamento de safras e **relatórios exportáveis em PDF**.
+
+> **Versão de referência:** código compartilhado em 23/10/2026, organizado em `backend/templates` e `backend/static`. Os recursos abaixo foram **identificados na implementação**, mas precisam ser exercitados no ambiente do grupo antes da apresentação. Esta documentação não substitui testes de ponta a ponta nem comprova, sozinha, os 20 fluxos exigidos pela disciplina.
+
+### 🧭 Navegação
+
+- [Funcionalidades relevantes](#-24-funcionalidades-relevantes)
+- [Destaques do projeto](#-destaques-do-projeto)
+- [Estrutura do projeto](#estrutura-do-projeto)
+- [Arquitetura](#arquitetura-utilizada)
+- [Como executar](#como-executar-o-backend)
+- [API](#rotas-da-api)
+- [Banco e segurança](#banco-de-dados)
+- [Próximos passos](#status-atual-do-projeto)
+
+## ⭐ 24 funcionalidades relevantes
+
+A relação abaixo apresenta **24 capacidades úteis identificadas nos arquivos do sistema**, e não uma contagem inflada de cliques, telas ou botões. **Cadastrar, consultar, editar e excluir** registros fazem parte de uma mesma funcionalidade de gestão por domínio, em vez de serem tratados artificialmente como quatro inovações distintas.
+
+### 👤 1. Conta e acesso
+
+| Nº | Funcionalidade | O que entrega ao usuário |
+|:--:|---|---|
+| **01** | **Cadastro de usuários** | Criação de conta e armazenamento dos dados no MySQL. |
+| **02** | **Login autenticado** | Validação de credenciais e token temporário para acessar os dados da própria conta. |
+| **03** | **Gerenciamento do perfil** | Consulta e atualização dos dados pessoais vinculados à conta autenticada. |
+
+### 📊 2. Dashboard
+
+| Nº | Funcionalidade | O que entrega ao usuário |
+|:--:|---|---|
+| **04** | **Dashboard com indicadores gerais** | Visualização do total de propriedades, safras, hectares cadastrados e propriedades com safras, além de resumos recentes. |
+
+### 🗺️ 3. Gestão territorial e mapas
+
+| Nº | Funcionalidade | O que entrega ao usuário |
+|:--:|---|---|
+| **05** | **Gestão de propriedades rurais** | Cadastro, consulta, atualização, listagem e exclusão das propriedades da conta. |
+| **06** | **Busca de cidade ou endereço no mapa** | O produtor digita uma localização e o sistema consulta o **Nominatim/OpenStreetMap** para centralizar o mapa na região encontrada. |
+| **07** | **Demarcação interativa de terrenos** | Desenho de polígonos ou retângulos sobre o mapa, com ajuste dos limites da área. |
+| **08** | **Cálculo automático de área e perímetro** | Estimativa da superfície em **hectares (ha)** e do contorno em **metros (m)** a partir do desenho. |
+| **09** | **Armazenamento dos limites da propriedade** | Persistência do contorno em **GeoJSON** e das coordenadas de referência para recuperar a área posteriormente. |
+| **10** | **Mapa da propriedade no monitoramento** | Exibição da área demarcada, ou de sua localização de referência, associada aos dados da propriedade. |
+
+### 🌱 4. Safras e planejamento agrícola
+
+| Nº | Funcionalidade | O que entrega ao usuário |
+|:--:|---|---|
+| **11** | **Gestão de safras vinculadas às propriedades** | Cadastro, consulta, atualização e exclusão de safras, com cultura, plantio, área, custo informado e observações. |
+| **12** | **Validação da área de plantio** | Impede cadastrar área plantada maior que a área registrada da propriedade. |
+| **13** | **Filtro de safras por propriedade** | Permite analisar apenas as safras relacionadas à fazenda selecionada. |
+| **14** | **Estimativa de janela de colheita** | Calcula o intervalo preliminar entre o plantio e a colheita para **soja, milho e café**. |
+| **15** | **Acompanhamento da situação da safra** | Diferencia a fase de planejamento, a janela estimada de colheita e uma conclusão efetivamente confirmada. |
+| **16** | **Indicadores de acompanhamento das safras** | Totais de safras em andamento/finalizadas e soma da área cultivada nos registros exibidos. |
+| **17** | **Histórico de safras da propriedade** | Lista as safras vinculadas à propriedade, identificando cultura, plantio e status. |
+| **18** | **Confirmação de colheita concluída** | Permite ao produtor marcar uma safra como **Finalizada**, salvando a confirmação no banco de dados. |
+
+### 🌦️ 5. Clima e alertas informativos
+
+| Nº | Funcionalidade | O que entrega ao usuário |
+|:--:|---|---|
+| **19** | **Consulta do clima atual da propriedade** | Busca informações da **OpenWeather** pelas coordenadas: temperatura, umidade, vento e chuva recente, entre outras. |
+| **20** | **Previsão meteorológica de curto prazo** | Exibe máximas previstas para até quatro dias consultados, com dados fornecidos pela API de previsão. |
+| **21** | **Indicador de déficit de pressão de vapor (VPD)** | Calcula uma medida meteorológica em kPa a partir da temperatura e umidade atual. |
+| **22** | **Avisos demonstrativos de calor e chuva** | Destaca calor de **35 °C ou mais** e chuva acumulada prevista de **50 mm ou mais** na análise; são limiares ilustrativos, não laudos agronômicos. |
+
+### 📑 6. Análises e documentos
+
+| Nº | Funcionalidade | O que entrega ao usuário |
+|:--:|---|---|
+| **23** | **Análise individual de safra** | Reúne propriedade, cultura, status, calendário, janela de colheita, custo informado, observações e clima disponível em uma visão de relatório. |
+| **24** | **Geração e download de relatório em PDF** | Cria no navegador um **PDF da safra** com os principais dados, análise, informações climáticas disponíveis e observações metodológicas, utilizando **jsPDF**. |
+
+> **O que não entrou na contagem:** abrir uma página, navegar por botões, limpar o desenho, trocar o texto de um botão, exibir uma mensagem e outros comportamentos auxiliares. As buscas de propriedades por localização e de safras por cultura também existem como endpoints, mas sua integração arquitetural ainda requer revisão; por isso não foram usadas para aumentar essa lista.
+
+> **Importante para o TCC:** estas 24 funcionalidades relevantes **não equivalem automaticamente a 24 casos de uso completos** no padrão *Tela → Controller → Service → Model/Repository → MySQL*. A lista oficial de 20 fluxos exigidos pelo professor deve ser confirmada mediante testes e critérios da atividade.
+
+## 🚀 Destaques do projeto
+
+### Localize e demarque a fazenda no mapa
+
+Na tela `cadastro_propriedade.html`, o usuário pode pesquisar uma cidade ou endereço, aproximar o mapa, desenhar o contorno da fazenda e obter uma estimativa de hectares e perímetro. O desenho e as coordenadas são enviados ao backend para compor o cadastro da propriedade.
+
+**Arquivos principais:** `backend/static/js/cadastroPropriedade.js`, `backend/templates/cadastro_propriedade.html`.
+
+### Monitore safras e condições do tempo
+
+A tela `monitoramento.html` apresenta o mapa da propriedade, informações cadastrais, histórico das safras, clima atual e previsão de curto prazo. A consulta meteorológica é associada à **localização da propriedade**, não a sensores instalados em cada hectare.
+
+**Arquivos principais:** `backend/static/js/monitoramento.js`, `backend/services/clima_service.py`.
+
+### Planeje a janela de colheita
+
+O sistema estima uma janela preliminar a partir da **cultura e da data de plantio**. É uma regra ilustrativa de calendário: não considera automaticamente cultivar, solo, clima histórico, manejo ou estágio fenológico.
+
+| Cultura | Regra preliminar do protótipo |
+|---|---|
+| Soja | 100 a 140 dias após o plantio |
+| Milho | 110 a 150 dias após o plantio |
+| Café | 3 a 4 anos para a primeira colheita de uma lavoura nova |
+
+**Arquivo principal:** `backend/services/estimar_colheita_service.py`.
+
+### Gere um PDF da safra
+
+Na tela de relatórios, o usuário seleciona uma propriedade e uma safra, visualiza a análise e clica em **Gerar PDF**. O arquivo é produzido pelo JavaScript com **jsPDF** e salvo no dispositivo do usuário. A confirmação de colheita é uma ação separada, persistida no MySQL.
+
+**Arquivos principais:** `backend/static/js/relatorios.js`, `backend/templates/relatorios.html`.
+
+```javascript
+// Função utilizada pela tela de relatórios
+function configurarBotaoPDF(safra) {
+    const botao = document.getElementById("btnGerarPDF");
+    if (!botao) return;
+    botao.onclick = function () {
+        gerarPDF(safra);
+    };
+}
+```
+
+**Observação:** o PDF retrata dados cadastrados e informações consultadas. Ele não comprova produtividade, lucro futuro nem a ocorrência de fenômenos meteorológicos na safra inteira.
+
+---
 
 ## Estrutura do projeto
 
@@ -116,130 +256,6 @@ Cada camada possui uma responsabilidade específica:
 A integração com a **OpenWeather** está encapsulada no `ClimaService`, em vez de expor a chave da API no navegador.
 
 > **Ponto de melhoria arquitetural:** na versão inspecionada, as rotas de busca de propriedades por localização e de safras por cultura ainda montam consultas SQLAlchemy diretamente nos Controllers. Os Repositories existem, mas essas rotas precisam ser refatoradas para atender integralmente às exigências da disciplina.
-
-## Funcionalidades Implementadas
-
-Esta seção mantém a organização do README original por **Usuários, Propriedades e Safras**, incluindo a enumeração dos casos de uso identificados para a entrega. A atividade da disciplina exige que uma funcionalidade esteja implementada de **ponta a ponta: Tela → API → Controller → Service → Model/Repository → Banco de Dados**. Por isso, a relação abaixo separa os **14 fluxos principais identificados** de outros recursos disponíveis que ainda precisam de adequação ou comprovação específica para entrarem na contagem de 20.
-
-| Nº | Funcionalidade principal | Interface / operação |
-| ---: | --- | --- |
-| 1 | Cadastrar usuário | Cadastro → `POST /usuarios` |
-| 2 | Realizar login | Login → `POST /login` |
-| 3 | Consultar o próprio perfil | Perfil → `GET /usuarios/<id>` |
-| 4 | Atualizar o próprio perfil | Perfil → `PUT /usuarios/<id>` |
-| 5 | Cadastrar propriedade | Cadastro de propriedade → `POST /propriedades` |
-| 6 | Listar propriedades da conta | Propriedades → `GET /propriedades` |
-| 7 | Consultar propriedade por ID | Propriedade/monitoramento → `GET /propriedades/<id>` |
-| 8 | Atualizar propriedade | Edição → `PUT /propriedades/<id>` |
-| 9 | Excluir propriedade | Propriedades → `DELETE /propriedades/<id>` |
-| 10 | Cadastrar safra | Cadastro de safra → `POST /safras` |
-| 11 | Listar safras da conta | Safras → `GET /safras` |
-| 12 | Consultar safra por ID | Edição/análise → `GET /safras/<id>` |
-| 13 | Atualizar safra | Edição → `PUT /safras/<id>` |
-| 14 | Excluir safra | Safras → `DELETE /safras/<id>` |
-
-**Observação para a avaliação:** a presença de um fluxo no código não substitui a demonstração e os testes reais. **Não declaramos 20 funcionalidades completas sem validar os seis fluxos adicionais exigidos pelo professor.**
-
-### Usuários
-
-**CRUD de Usuários:**
-
-- Cadastrar usuário pela tela de cadastro;
-- Consultar os dados do próprio usuário na tela de perfil;
-- Atualizar os dados da própria conta;
-- Excluir usuário por meio da rota autenticada do backend (a existência de uma tela de exclusão deve ser conferida antes de incluí-la na contagem oficial);
-- Listar informações da própria conta pela API, sem expor a lista de todas as contas existentes.
-
-**Funcionalidades além do CRUD:**
-
-- Realizar login com e-mail e senha;
-- Armazenar senhas com hash;
-- Receber token de autenticação temporário;
-- Impedir acesso ao perfil de outra conta;
-- Converter para hash senhas antigas após login válido, quando aplicável.
-
-O sistema possui cadastro, login, consulta e atualização dos dados da própria conta. O backend também contém uma rota para exclusão de usuário e Services relacionados, mas essa operação só deve ser contada na atividade após conferir uma interface utilizável e demonstrar o fluxo completo.
-
-O login utiliza senhas com **hash**, e contas antigas podem ter suas senhas convertidas para hash após autenticação bem-sucedida. As consultas protegidas exigem um **token de autenticação assinado**, associado à conta.
-
-A busca global de usuários por nome, embora esteja representada em arquivos antigos de Repository e SQL, **não está disponível na API atual**: a rota foi bloqueada para evitar exposição indevida de dados pessoais. A listagem global de todas as contas também não é oferecida ao usuário comum.
-
-### Propriedades
-
-**CRUD de Propriedades:**
-
-- Cadastrar uma propriedade;
-- Listar as propriedades vinculadas à conta autenticada;
-- Consultar uma propriedade pelo ID;
-- Atualizar as informações de uma propriedade;
-- Excluir uma propriedade, observando as regras de dependência com safras.
-
-**Funcionalidades além do CRUD:**
-
-- Delimitar áreas no mapa e armazenar localização, coordenadas e GeoJSON;
-- Buscar propriedades por cidade, estado ou nome dentro da própria conta;
-- Abrir o monitoramento de uma propriedade específica;
-- Visualizar as safras vinculadas à propriedade.
-
-As principais ações são:
-
-- Cadastrar, listar, consultar, editar e excluir propriedades vinculadas à conta.
-- Informar nome, cidade, estado, observações, área e perímetro.
-- Marcar ou delimitar propriedades no mapa e guardar coordenadas e GeoJSON quando disponíveis.
-- Abrir o monitoramento de uma propriedade específica.
-- Consultar as safras relacionadas à propriedade.
-
-O backend possui busca por localização. Na versão atual, a consulta filtra propriedades pertencentes ao usuário autenticado, mas a implementação dessa busca ainda precisa ser concentrada no Service/Repository para cumprir estritamente a arquitetura solicitada na atividade.
-
-### Safras
-
-**CRUD de Safras:**
-
-- Cadastrar uma safra vinculada a uma propriedade;
-- Listar safras da conta autenticada;
-- Consultar uma safra por ID;
-- Atualizar uma safra;
-- Excluir uma safra.
-
-**Funcionalidades além do CRUD:**
-
-- Filtrar safras por propriedade e cultura;
-- Estimar a janela de colheita conforme a cultura;
-- Abrir a análise de uma safra específica;
-- Consultar clima atual e previsão da propriedade;
-- Confirmar a conclusão da colheita e persistir o status no MySQL;
-- Gerar relatório PDF de uma safra.
-
-As principais ações são:
-
-- Cadastrar, listar, consultar, atualizar e excluir safras associadas a propriedades.
-- Identificar cultura, data de plantio, área cultivada e informações complementares.
-- Selecionar propriedade e visualizar somente suas safras.
-- Consultar uma janela preliminar de colheita para **café, milho ou soja**.
-- Abrir **Analisar Safra**, com calendário estimado, clima atual e previsão de curto prazo.
-- Registrar o status **Finalizada** após confirmação explícita do usuário e salvar no MySQL.
-- Exportar as informações da análise em PDF.
-
-A análise deixou de exibir **lucro estimado** e **produtividade estimada**, pois não existe no protótipo um modelo suficientemente fundamentado para apresentar esses resultados. Campos legados podem continuar na Model/banco por compatibilidade, sem compor o relatório.
-
-### Recursos adicionais que já existem
-
-Estes recursos agregam valor ao projeto, mas **não são somados automaticamente aos 14 fluxos principais** para a atividade de 20 funcionalidades:
-
-1. Consultar o clima atual pela OpenWeather.
-2. Consultar previsão meteorológica de curto prazo.
-3. Calcular janelas estimadas de colheita para café, milho e soja.
-4. Filtrar safras por propriedade.
-5. Buscar safras por cultura.
-6. Buscar propriedades por localização.
-7. Apresentar a análise climática e temporal da safra.
-8. Confirmar o encerramento de uma safra (na versão atual reutiliza `AtualizarSafraService`).
-9. Gerar relatório PDF no navegador.
-10. Consultar indicadores de acompanhamento no dashboard.
-
-Para incluir novos itens na contagem oficial, cada fluxo deve cumprir **a arquitetura e a persistência exigidas na atividade**, e ser apresentado em funcionamento.
-
-**Situação da meta de 20 funcionalidades:** há 14 fluxos principais identificados e 6 ou mais possibilidades de ampliação. A equipe **não deve apresentar os itens ainda em adequação como se já estivessem comprovados**. Para o prazo da atividade, priorizar a demonstração objetiva das funções existentes e a implementação/validação dos casos de uso restantes, com Service próprio quando exigido. A disponibilidade de uma rota ou de um botão, isoladamente, não atende ao requisito do professor.
 
 ## Integração do Frontend com a API
 
@@ -702,7 +718,7 @@ A versão atual possui:
 
 ## Vídeo de demonstração da atividade
 
-A entrega exige **vídeo obrigatório de no máximo 5 minutos**, além do commit/push no repositório oficial. Para demonstrar o AgroRisk de hoje, o grupo pode seguir este roteiro, ajustando o tempo às telas efetivamente testadas:
+Se a disciplina exigir um vídeo de demonstração, confira o tempo máximo e os critérios informados pelo professor antes de gravar. Para demonstrar o AgroRisk de hoje, o grupo pode seguir este roteiro, ajustando o tempo às telas efetivamente testadas:
 
 | Tempo sugerido | Demonstração | O que comprovar |
 | --- | --- | --- |
