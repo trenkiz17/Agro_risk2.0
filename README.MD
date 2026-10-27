@@ -1,46 +1,31 @@
-
-
-````markdown
 # AgroRisk
 
-Pequenos e médios produtores rurais enfrentam dificuldades para centralizar e organizar as informações das suas propriedades, safras e produções, o que dificulta o acompanhamento da produtividade, o planejamento agrícola e a tomada de decisões.
+Pequenos e médios produtores rurais enfrentam dificuldades para centralizar e organizar informações sobre suas propriedades, safras e atividades agrícolas. Essa falta de organização pode prejudicar o acompanhamento das lavouras, o planejamento de plantio e colheita e a tomada de decisões.
 
-O **AgroRisk** foi desenvolvido para resolver esse problema, oferecendo uma plataforma de gerenciamento rural que permite cadastrar usuários, propriedades e safras, reunindo todas as informações em um único sistema e facilitando o controle das atividades agrícolas.
+O **AgroRisk** foi desenvolvido como projeto acadêmico de TCC para auxiliar na gestão agrícola. A plataforma permite cadastrar usuários, propriedades e safras, visualizar áreas em mapas, consultar dados meteorológicos reais e acompanhar **janelas estimadas de colheita**. O sistema também apresenta análises de safras, permite confirmar a conclusão de uma colheita e exportar informações em PDF.
+
+> **Versão documentada:** AgroRisk para demonstração acadêmica em 23/10/2026, executado pelo Flask com páginas em `backend/templates/` e CSS, JavaScript e imagens em `backend/static/`. Os itens apresentados foram identificados na versão atual do código. A gravação do vídeo e os testes no computador da equipe devem confirmar cada fluxo de ponta a ponta.
 
 ## Estrutura do projeto
 
 ```text
 AgroRisk/
-
-├── frontend/
-
-│   ├── index.html
-│   ├── dashboard.html
-│   ├── cadastro_propriedade.html
-│   ├── cadastro_safras.html
-│   ├── safras.html
-│   ├── monitoramento.html
-│   ├── relatorios.html
-│   ├── perfil.html
-│   │
-│   ├── css/
-│   │   └── style.css
-│   │
-│   └── js/
-│       ├── api.js
-│       ├── safras.js
-│       └── ...
+├── README.md
+├── .gitignore
+├── docs/
+│   └── diagrama-classes.md
 │
 └── backend/
-
     ├── app.py
+    ├── config.py
     ├── requirements.txt
     ├── .env.example
     │
     ├── controllers/
     │   ├── usuario_controller.py
     │   ├── propriedade_controller.py
-    │   └── safra_controller.py
+    │   ├── safra_controller.py
+    │   └── clima_controller.py
     │
     ├── models/
     │   ├── database.py
@@ -54,400 +39,362 @@ AgroRisk/
     │   └── safra_repository.py
     │
     ├── services/
+    │   ├── login_usuario_service.py
     │   ├── criar_usuario_service.py
-    │   ├── listar_usuario_service.py
-    │   ├── buscar_usuario_por_id_service.py
-    │   ├── buscar_usuario_por_nome_service.py
     │   ├── atualizar_usuario_service.py
-    │   ├── deletar_usuario_service.py
     │   ├── criar_propriedade_service.py
     │   ├── listar_propriedade_service.py
-    │   ├── buscar_propriedade_por_id_service.py
-    │   ├── buscar_propriedade_por_localizacao_service.py
-    │   ├── atualizar_propriedade_service.py
-    │   ├── deletar_propriedade_service.py
     │   ├── criar_safra_service.py
-    │   ├── listar_safra_service.py
-    │   ├── buscar_safra_por_id_service.py
-    │   ├── buscar_safra_por_cultura_service.py
     │   ├── atualizar_safra_service.py
-    │   └── deletar_safra_service.py
+    │   ├── estimar_colheita_service.py
+    │   ├── clima_service.py
+    │   └── ...
     │
-    └── database/
-        └── create_database.sql
+    ├── security/
+    │   └── auth.py
+    ├── database/
+    │   └── create_database.sql
+    ├── templates/
+    │   ├── index.html
+    │   ├── login.html
+    │   ├── cadastro.html
+    │   ├── dashboard.html
+    │   ├── perfil.html
+    │   ├── propriedades.html
+    │   ├── cadastro_propriedade.html
+    │   ├── monitoramento.html
+    │   ├── safras.html
+    │   ├── cadastro_safras.html
+    │   └── relatorios.html
+    │
+    ├── static/
+    │   ├── css/style.css
+    │   ├── js/
+    │   │   ├── api.js
+    │   │   ├── login.js
+    │   │   ├── propriedades.js
+    │   │   ├── safras.js
+    │   │   ├── cadastroSafra.js
+    │   │   ├── monitoramento.js
+    │   │   ├── relatorios.js
+    │   │   └── ...
+    │   └── img/
+    │
+    └── tests/
+        ├── test_paginas_flask.py
+        ├── test_protecao_contas.py
+        └── test_clima_service.py
 ```
+
+**Mudança importante:** nas primeiras versões, o HTML ficava em `frontend/` e era aberto com Live Server. Na versão atual, **o próprio Flask entrega as páginas**, e não é necessário iniciar o Live Server. Os caminhos antigos do frontend foram preservados conceitualmente, mas os arquivos agora estão em `templates` e `static`.
 
 ## Arquitetura utilizada
 
 ```text
-Frontend
-
-   ↓
-
-Controller
-
-   ↓
-
-Service
-
-   ↓
-
-Repository
-
-   ↓
-
-Procedure
-
-   ↓
-
-Banco de Dados
+Interface HTML/CSS/JavaScript (Flask: templates + static)
+                         ↓
+                     API Flask
+                         ↓
+                 Controller (classe)
+                         ↓
+                 Service (caso de uso)
+                         ↓
+              Model / Repository
+                         ↓
+                      MySQL
 ```
 
-Cada camada possui uma responsabilidade específica. O **Controller** recebe as requisições HTTP e retorna as respostas da API. O **Service** concentra as regras de negócio de cada funcionalidade. A **Model** representa as entidades do domínio e realiza as operações básicas de CRUD.
+Cada camada possui uma responsabilidade específica:
 
-O **Repository** é responsável pelas consultas que vão além do CRUD básico, utilizando Stored Procedures no banco de dados para realizar filtros, buscas e ordenações específicas.
+- **Frontend:** recebe as ações dos usuários, valida os campos básicos, envia requisições e apresenta os resultados.
+- **Controller:** interpreta requisições HTTP, identifica o usuário autenticado, aciona os Services e devolve respostas JSON.
+- **Service:** aplica as validações e regras de negócio e coordena cada caso de uso.
+- **Model:** representa as entidades e executa operações básicas de persistência com SQLAlchemy.
+- **Repository:** deve concentrar consultas especiais e, quando utilizadas, chamadas a *Stored Procedures*.
+- **Banco de dados:** armazena usuários, propriedades e safras no MySQL.
 
-As **Procedures** ficam armazenadas no MySQL e são chamadas pelos Repositories quando uma funcionalidade exige uma consulta mais complexa.
+A integração com a **OpenWeather** está encapsulada no `ClimaService`, em vez de expor a chave da API no navegador.
 
-## Funcionalidades implementadas (backend)
+> **Ponto de melhoria arquitetural:** na versão inspecionada, as rotas de busca de propriedades por localização e de safras por cultura ainda montam consultas SQLAlchemy diretamente nos Controllers. Os Repositories existem, mas essas rotas precisam ser refatoradas para atender integralmente às exigências da disciplina.
+
+## Funcionalidades Implementadas
+
+Esta seção mantém a organização do README original por **Usuários, Propriedades e Safras**, incluindo a enumeração dos casos de uso identificados para a entrega. A atividade da disciplina exige que uma funcionalidade esteja implementada de **ponta a ponta: Tela → API → Controller → Service → Model/Repository → Banco de Dados**. Por isso, a relação abaixo separa os **14 fluxos principais identificados** de outros recursos disponíveis que ainda precisam de adequação ou comprovação específica para entrarem na contagem de 20.
+
+| Nº | Funcionalidade principal | Interface / operação |
+| ---: | --- | --- |
+| 1 | Cadastrar usuário | Cadastro → `POST /usuarios` |
+| 2 | Realizar login | Login → `POST /login` |
+| 3 | Consultar o próprio perfil | Perfil → `GET /usuarios/<id>` |
+| 4 | Atualizar o próprio perfil | Perfil → `PUT /usuarios/<id>` |
+| 5 | Cadastrar propriedade | Cadastro de propriedade → `POST /propriedades` |
+| 6 | Listar propriedades da conta | Propriedades → `GET /propriedades` |
+| 7 | Consultar propriedade por ID | Propriedade/monitoramento → `GET /propriedades/<id>` |
+| 8 | Atualizar propriedade | Edição → `PUT /propriedades/<id>` |
+| 9 | Excluir propriedade | Propriedades → `DELETE /propriedades/<id>` |
+| 10 | Cadastrar safra | Cadastro de safra → `POST /safras` |
+| 11 | Listar safras da conta | Safras → `GET /safras` |
+| 12 | Consultar safra por ID | Edição/análise → `GET /safras/<id>` |
+| 13 | Atualizar safra | Edição → `PUT /safras/<id>` |
+| 14 | Excluir safra | Safras → `DELETE /safras/<id>` |
+
+**Observação para a avaliação:** a presença de um fluxo no código não substitui a demonstração e os testes reais. **Não declaramos 20 funcionalidades completas sem validar os seis fluxos adicionais exigidos pelo professor.**
 
 ### Usuários
 
-CRUD de Usuários:
+**CRUD de Usuários:**
 
-* Cadastrar um usuário;
+- Cadastrar usuário pela tela de cadastro;
+- Consultar os dados do próprio usuário na tela de perfil;
+- Atualizar os dados da própria conta;
+- Excluir usuário por meio da rota autenticada do backend (a existência de uma tela de exclusão deve ser conferida antes de incluí-la na contagem oficial);
+- Listar informações da própria conta pela API, sem expor a lista de todas as contas existentes.
 
-* Listar todos os usuários cadastrados;
+**Funcionalidades além do CRUD:**
 
-* Buscar um usuário pelo id;
+- Realizar login com e-mail e senha;
+- Armazenar senhas com hash;
+- Receber token de autenticação temporário;
+- Impedir acesso ao perfil de outra conta;
+- Converter para hash senhas antigas após login válido, quando aplicável.
 
-* Atualizar os dados de um usuário;
+O sistema possui cadastro, login, consulta e atualização dos dados da própria conta. O backend também contém uma rota para exclusão de usuário e Services relacionados, mas essa operação só deve ser contada na atividade após conferir uma interface utilizável e demonstrar o fluxo completo.
 
-* Excluir um usuário.
+O login utiliza senhas com **hash**, e contas antigas podem ter suas senhas convertidas para hash após autenticação bem-sucedida. As consultas protegidas exigem um **token de autenticação assinado**, associado à conta.
 
-Funcionalidade além do CRUD:
-
-* Buscar usuários pelo nome;
-
-* Permitir busca parcial utilizando `LIKE`;
-
-* Ordenar os resultados pelo nome.
+A busca global de usuários por nome, embora esteja representada em arquivos antigos de Repository e SQL, **não está disponível na API atual**: a rota foi bloqueada para evitar exposição indevida de dados pessoais. A listagem global de todas as contas também não é oferecida ao usuário comum.
 
 ### Propriedades
 
-CRUD de Propriedades:
+**CRUD de Propriedades:**
 
-* Cadastrar uma propriedade;
+- Cadastrar uma propriedade;
+- Listar as propriedades vinculadas à conta autenticada;
+- Consultar uma propriedade pelo ID;
+- Atualizar as informações de uma propriedade;
+- Excluir uma propriedade, observando as regras de dependência com safras.
 
-* Listar todas as propriedades cadastradas;
+**Funcionalidades além do CRUD:**
 
-* Buscar uma propriedade pelo id;
+- Delimitar áreas no mapa e armazenar localização, coordenadas e GeoJSON;
+- Buscar propriedades por cidade, estado ou nome dentro da própria conta;
+- Abrir o monitoramento de uma propriedade específica;
+- Visualizar as safras vinculadas à propriedade.
 
-* Atualizar os dados de uma propriedade;
+As principais ações são:
 
-* Excluir uma propriedade.
+- Cadastrar, listar, consultar, editar e excluir propriedades vinculadas à conta.
+- Informar nome, cidade, estado, observações, área e perímetro.
+- Marcar ou delimitar propriedades no mapa e guardar coordenadas e GeoJSON quando disponíveis.
+- Abrir o monitoramento de uma propriedade específica.
+- Consultar as safras relacionadas à propriedade.
 
-Funcionalidade além do CRUD:
-
-* Buscar propriedades pela localização;
-
-* Filtrar os resultados utilizando `WHERE`;
-
-* Ordenar os resultados.
+O backend possui busca por localização. Na versão atual, a consulta filtra propriedades pertencentes ao usuário autenticado, mas a implementação dessa busca ainda precisa ser concentrada no Service/Repository para cumprir estritamente a arquitetura solicitada na atividade.
 
 ### Safras
 
-CRUD de Safras:
+**CRUD de Safras:**
 
-* Cadastrar uma safra;
+- Cadastrar uma safra vinculada a uma propriedade;
+- Listar safras da conta autenticada;
+- Consultar uma safra por ID;
+- Atualizar uma safra;
+- Excluir uma safra.
 
-* Listar todas as safras cadastradas;
+**Funcionalidades além do CRUD:**
 
-* Buscar uma safra pelo id;
+- Filtrar safras por propriedade e cultura;
+- Estimar a janela de colheita conforme a cultura;
+- Abrir a análise de uma safra específica;
+- Consultar clima atual e previsão da propriedade;
+- Confirmar a conclusão da colheita e persistir o status no MySQL;
+- Gerar relatório PDF de uma safra.
 
-* Atualizar os dados de uma safra;
+As principais ações são:
 
-* Excluir uma safra.
+- Cadastrar, listar, consultar, atualizar e excluir safras associadas a propriedades.
+- Identificar cultura, data de plantio, área cultivada e informações complementares.
+- Selecionar propriedade e visualizar somente suas safras.
+- Consultar uma janela preliminar de colheita para **café, milho ou soja**.
+- Abrir **Analisar Safra**, com calendário estimado, clima atual e previsão de curto prazo.
+- Registrar o status **Finalizada** após confirmação explícita do usuário e salvar no MySQL.
+- Exportar as informações da análise em PDF.
 
-Funcionalidade além do CRUD:
+A análise deixou de exibir **lucro estimado** e **produtividade estimada**, pois não existe no protótipo um modelo suficientemente fundamentado para apresentar esses resultados. Campos legados podem continuar na Model/banco por compatibilidade, sem compor o relatório.
 
-* Buscar safras pela cultura;
+### Recursos adicionais que já existem
 
-* Filtrar os resultados utilizando `WHERE`;
+Estes recursos agregam valor ao projeto, mas **não são somados automaticamente aos 14 fluxos principais** para a atividade de 20 funcionalidades:
 
-* Ordenar as safras pelo ano.
+1. Consultar o clima atual pela OpenWeather.
+2. Consultar previsão meteorológica de curto prazo.
+3. Calcular janelas estimadas de colheita para café, milho e soja.
+4. Filtrar safras por propriedade.
+5. Buscar safras por cultura.
+6. Buscar propriedades por localização.
+7. Apresentar a análise climática e temporal da safra.
+8. Confirmar o encerramento de uma safra (na versão atual reutiliza `AtualizarSafraService`).
+9. Gerar relatório PDF no navegador.
+10. Consultar indicadores de acompanhamento no dashboard.
+
+Para incluir novos itens na contagem oficial, cada fluxo deve cumprir **a arquitetura e a persistência exigidas na atividade**, e ser apresentado em funcionamento.
+
+**Situação da meta de 20 funcionalidades:** há 14 fluxos principais identificados e 6 ou mais possibilidades de ampliação. A equipe **não deve apresentar os itens ainda em adequação como se já estivessem comprovados**. Para o prazo da atividade, priorizar a demonstração objetiva das funções existentes e a implementação/validação dos casos de uso restantes, com Service próprio quando exigido. A disponibilidade de uma rota ou de um botão, isoladamente, não atende ao requisito do professor.
 
 ## Integração do Frontend com a API
 
-O frontend passou a utilizar um arquivo responsável pela comunicação com o backend:
+A comunicação entre páginas e backend é centralizada em:
 
 ```text
-frontend/js/api.js
+backend/static/js/api.js
 ```
 
-Esse arquivo centraliza as requisições feitas para a API.
+O endereço é obtido automaticamente da origem em que o site foi aberto:
 
-A URL utilizada atualmente é:
+```javascript
+const API_URL = window.location.origin;
+```
+
+Ao executar o Flask localmente, essa origem normalmente será:
 
 ```text
-http://localhost:5000
+http://127.0.0.1:5000
 ```
 
-Foram criadas funções genéricas para realizar requisições utilizando os métodos HTTP:
+O arquivo fornece funções auxiliares para os métodos **GET, POST, PUT e DELETE**, além de funções específicas para usuários, propriedades, safras, estimativa de colheita e clima.
 
-* GET;
-
-* POST;
-
-* PUT;
-
-* DELETE.
-
-A estrutura de comunicação permite que as páginas do frontend utilizem funções específicas para acessar os recursos da API.
+Nas rotas protegidas, o frontend envia o token recebido no login pelo cabeçalho `Authorization: Bearer ...`. O backend verifica a assinatura, a validade e a identificação da conta; não deve confiar apenas no `usuario_id` enviado pelo JavaScript.
 
 ### Funções de Safras no frontend
 
-O arquivo:
+Algumas funções utilizadas em `backend/static/js/api.js`:
 
-```text
-frontend/js/api.js
+```javascript
+listarSafras();
+listarSafrasDaPropriedade(propriedadeId);
+buscarSafra(id);
+cadastrarSafra(dados);
+atualizarSafra(id, dados);
+excluirSafra(id);
+estimarColheita(cultura, dataPlantio);
 ```
 
-possui funções para trabalhar com as safras:
-
-```text
-listarSafras()
-```
-
-Responsável por listar todas as safras.
-
-```text
-listarSafrasDaPropriedade(id)
-```
-
-Responsável por buscar as safras relacionadas a uma propriedade específica.
-
-```text
-cadastrarSafra(dados)
-```
-
-Responsável por enviar uma nova safra para a API.
-
-A estrutura também está preparada para as operações de atualização e exclusão das safras por meio da API.
+A API é responsável pela persistência no MySQL; o navegador não é o armazenamento central das safras.
 
 ## Tela de Safras
 
-Foi desenvolvida a tela:
+Foi desenvolvida a tela de acompanhamento das safras com cartões gerados automaticamente pelo JavaScript, indicadores de quantidade, área cultivada, situação no calendário e acesso às operações principais.
+
+Arquivo da versão atual:
 
 ```text
-frontend/safras.html
+backend/templates/safras.html
 ```
 
-A tela permite visualizar as safras cadastradas na propriedade.
-
-A página possui:
-
-* Identificação da propriedade;
-
-* Total de safras;
-
-* Total de safras em andamento;
-
-* Total de safras finalizadas;
-
-* Área total plantada;
-
-* Lista de safras cadastradas;
-
-* Botão para cadastrar uma nova safra;
-
-* Botão para monitorar uma safra;
-
-* Botão para editar uma safra;
-
-* Botão para excluir uma safra;
-
-* Botão para acessar o relatório da safra.
-
-Os cards das safras são gerados automaticamente pelo JavaScript, evitando a necessidade de cadastrar manualmente cada card no HTML.
+A tela apresenta as safras da conta e permite acessar o cadastro, a edição, a exclusão e a análise. Os cartões são preenchidos dinamicamente pelo JavaScript, considerando a propriedade, a cultura, as datas e o status registrados. Os indicadores da listagem ajudam a visualizar a situação das safras e a área cultivada.
 
 ## JavaScript da tela de Safras
 
-O arquivo:
+O script da listagem organiza dados reais consultados na API, constrói os cartões, atualiza a visualização após alterações e disponibiliza os botões das operações da safra.
+
+Arquivo:
 
 ```text
-frontend/js/safras.js
+backend/static/js/safras.js
 ```
 
-é responsável pelo funcionamento da tela de Safras.
-
-Entre as funcionalidades implementadas estão:
-
-* Carregar as safras da API;
-
-* Utilizar os dados armazenados no `localStorage` quando necessário;
-
-* Unificar as safras retornadas pela API com as safras locais;
-
-* Renderizar automaticamente os cards das safras;
-
-* Ordenar as safras pela data de plantio;
-
-* Calcular o status da safra;
-
-* Calcular o resumo das safras;
-
-* Identificar a cultura da safra;
-
-* Exibir um ícone de acordo com a cultura;
-
-* Formatar datas;
-
-* Formatar a área plantada;
-
-* Proteger a exibição dos dados contra HTML indevido.
+É responsável por consultar a API, montar os cartões, aplicar filtros e atualizar a interface. Os dados persistentes vêm do backend/MySQL. Qualquer compatibilidade residual com `localStorage` não deve ser considerada uma sincronização entre dispositivos.
 
 ## Status das Safras
 
-O sistema possui uma lógica para determinar o status da safra.
+O AgroRisk distingue a **situação calculada pelo calendário** do **status confirmado pelo produtor**:
 
-Quando a API informa um status, ele pode ser utilizado diretamente.
+- **Planejamento / em desenvolvimento:** acompanhamento conforme os registros e a janela estimada.
+- **Na janela prevista:** a data atual está dentro do intervalo estimado, mas isso não comprova que houve colheita.
+- **Janela encerrada:** a previsão terminou sem uma confirmação de conclusão.
+- **Finalizada:** o usuário confirmou a conclusão, e o status foi atualizado no MySQL.
 
-Quando o status não é informado, o sistema utiliza a data de colheita para determinar a situação.
-
-As situações utilizadas atualmente são:
-
-```text
-Em andamento
-```
-
-e
-
-```text
-Finalizada
-```
-
-Quando a data de colheita já passou, a safra é apresentada como finalizada.
-
-Quando a data de colheita ainda não passou, a safra permanece como em andamento.
+**Uma safra não é finalizada automaticamente porque sua data prevista passou.** Essa distinção evita apresentar uma previsão como se fosse um resultado efetivamente ocorrido.
 
 ## Culturas das Safras
 
-A tela de Safras possui identificação automática da cultura para definir o ícone apresentado no card.
+As culturas utilizadas pelo estimador atual são:
 
-Atualmente foram consideradas culturas como:
+- **Soja:** janela preliminar de 100 a 140 dias após o plantio.
+- **Milho:** janela preliminar de 110 a 150 dias após o plantio.
+- **Café:** referência inicial de 3 a 4 anos após o plantio para uma lavoura nova.
 
-* Soja;
+Essas regras são **parâmetros do protótipo**, e não estimativas estatísticas validadas com dados históricos. As durações variam com a variedade, a região e as condições de manejo. Para um cafezal já produtivo, somente a data de plantio não permite prever a próxima colheita; eventos como florada e maturação precisam ser considerados.
 
-* Milho;
+**Exemplo para a mesma data de plantio, 22/10/2026:**
 
-* Café;
+| Cultura | Início estimado | Fim estimado |
+| --- | --- | --- |
+| Soja | 30/01/2027 | 11/03/2027 |
+| Milho | 09/02/2027 | 21/03/2027 |
+| Café | 22/10/2029 | 22/10/2030 |
 
-* Algodão;
-
-* Cana.
-
-Quando a cultura não possui um ícone específico, o sistema utiliza o ícone padrão de cultivo.
+A API também retorna uma **data central de referência**, usada no cadastro, e apresenta a janela na interface.
 
 ## Cadastro de Safras
 
-Foi criada a tela:
+Arquivo:
 
 ```text
-frontend/cadastro_safras.html
+backend/templates/cadastro_safras.html
 ```
 
-O cadastro recebe informações relacionadas à safra e envia os dados para a API.
+O formulário envia dados como `propriedade_id`, `nome`, `cultura`, `data_plantio`, `area_plantada`, `custo_total` (opcional) e `observacoes` para a API. A data de colheita de referência é calculada com o apoio do estimador do backend. O sistema verifica campos obrigatórios, cultura e a relação entre a área informada e a propriedade.
 
-Entre as informações utilizadas atualmente estão:
-
-```text
-propriedade_id
-nome
-cultura
-data_plantio
-data_colheita
-area_plantada
-produtividade_esperada
-observacoes
-```
-
-Antes de enviar os dados para a API, o JavaScript realiza validações básicas, como:
-
-* Verificar se o nome da safra foi informado;
-
-* Verificar se a data de plantio foi informada;
-
-* Verificar se a data de colheita foi informada;
-
-* Verificar se a área plantada é maior que zero.
-
-Após o cadastro, a aplicação informa ao usuário que a safra foi cadastrada.
+O cadastro consulta o **EstimarColheitaService**, que devolve a janela estimada de acordo com a cultura selecionada.
 
 ## Monitoramento das Safras
 
-O botão de monitoramento da tela de Safras passou a utilizar o identificador da própria safra.
+O sistema permite acompanhar a safra no contexto de sua propriedade. O monitoramento usa as coordenadas da propriedade como referência para consultar o clima. Quando uma área foi demarcada no mapa, a API utiliza um ponto de referência da área, não uma medição individual de cada hectare.
 
-O acesso é realizado utilizando uma URL semelhante a:
-
-```text
-monitoramento.html?id=ID_DA_SAFRA
-```
-
-Dessa forma, o monitoramento pode ser direcionado para a safra selecionada, evitando que todas as safras sejam tratadas como se fossem a mesma.
-
-Essa estrutura também prepara o sistema para que futuramente o monitoramento apresente informações específicas daquela safra.
+As consultas meteorológicas são realizadas pelo backend e dependem de uma chave válida da OpenWeather no `.env`.
 
 ## Edição das Safras
 
-O botão **Editar** da tela de Safras foi preparado para utilizar o identificador da safra selecionada.
-
-O acesso utiliza uma URL semelhante a:
+O acesso à edição identifica o registro selecionado, por exemplo:
 
 ```text
-cadastro_safras.html?id=ID_DA_SAFRA
+/cadastro_safras.html?id=ID_DA_SAFRA
 ```
 
-Dessa forma, a tela de cadastro pode identificar qual safra está sendo editada.
-
-A intenção é permitir que os dados da própria safra sejam carregados e posteriormente atualizados pela API.
+O sistema busca os dados da safra e permite atualizar as informações por meio da API, respeitando a propriedade e a conta autenticada.
 
 ## Exclusão das Safras
 
-Foi adicionado um botão **Excluir** aos cards das safras.
+A listagem permite solicitar a exclusão de uma safra, mediante confirmação do usuário. A operação utiliza `DELETE /safras/<id>`, e o backend confere se o registro pertence à conta autenticada.
 
-Ao selecionar a opção de exclusão, o sistema solicita uma confirmação:
-
-```text
-Tem certeza que deseja excluir esta safra?
-```
-
-Após a confirmação, o JavaScript tenta realizar a exclusão da safra utilizando o seu identificador.
-
-A estrutura utilizada permite que, após uma exclusão realizada com sucesso, a lista de safras seja carregada novamente e os indicadores da página sejam atualizados.
-
-A exclusão ainda está em etapa de ajuste de integração entre frontend e API.
+Após uma exclusão válida, a listagem pode ser recarregada para refletir os dados persistidos no MySQL.
 
 ## Informações de Plantio e Colheita
 
-O sistema possui atualmente campos para:
+O sistema armazena a data de plantio e uma data de colheita de referência. Para planejamento, o estimador apresenta também **uma janela de datas**, evitando afirmar que uma colheita acontecerá em um único dia exato.
 
-```text
-Data de plantio
-Data de colheita
-```
+A meteorologia atual e a previsão de curto prazo aparecem no monitoramento e na análise de safra, mas **não determinam automaticamente a janela de colheita para anos futuros**. A adaptação da estimativa ao clima exigiria dados históricos, cultivar, estágio fenológico e calibração agronômica.
 
-Essas informações fazem parte do planejamento da safra.
+## Integração com a API de Clima
 
-A ideia do sistema não é simplesmente deixar o produtor escolher qualquer data de colheita. Futuramente, essas informações poderão ser determinadas ou recomendadas pelo próprio sistema de acordo com fatores agrícolas e climáticos.
+A integração utiliza o **OpenWeather**, com a chave configurada em `OPENWEATHER_API_KEY` no `.env` do backend.
 
-Atualmente o projeto ainda não possui uma API de clima integrada ao sistema.
+O arquivo `backend/services/clima_service.py` encapsula as chamadas externas e o tratamento de erros. A rota `/api/clima` fornece condições atuais; a rota `/api/clima/previsao` fornece previsão de curto prazo, quando disponível.
 
-A integração climática será utilizada posteriormente para auxiliar na geração dessas informações e recomendações.
+Os dados exibidos podem incluir temperatura, umidade, vento, condição do tempo e precipitação prevista. São informações meteorológicas consultadas em tempo de execução: **o projeto ainda não mantém uma série histórica própria de clima no MySQL**.
+
+## Analisar Safra e Relatórios
+
+Ao selecionar **Analisar Safra**, o AgroRisk apresenta os dados da safra, a propriedade vinculada, o status confirmado, a janela estimada de colheita e as condições meteorológicas disponíveis.
+
+A análise pode destacar atenção a calor ou chuva segundo regras demonstrativas. Essas indicações **não representam diagnóstico agronômico ou previsão garantida de perda de produção**.
+
+O relatório pode ser exportado em **PDF**, gerado pelo JavaScript no navegador com jsPDF. Na versão atual, não são exibidas estimativas de lucro nem produtividade; o custo informado pelo usuário pode ser apresentado como dado cadastrado.
 
 ## Repositories utilizados
 
-Os Repositories foram criados para encapsular as consultas que vão além do CRUD básico.
+Os Repositories foram criados para encapsular **consultas especiais**, como pesquisas por nome, localização ou cultura e possíveis chamadas a Stored Procedures. O CRUD principal utiliza as operações das Models, não um Repository para cada operação simples.
 
 ### UsuarioRepository
 
@@ -457,19 +404,7 @@ Arquivo:
 backend/repositories/usuario_repository.py
 ```
 
-Funcionalidade implementada:
-
-```text
-buscar_por_nome(nome)
-```
-
-Utiliza a Stored Procedure:
-
-```text
-sp_buscar_usuario_nome
-```
-
-A consulta permite encontrar usuários pelo nome, inclusive quando apenas parte do nome é informada.
+Método existente: `buscar_por_nome(nome)`. A implementação contém uma opção de chamada à Stored Procedure `sp_buscar_usuario_nome`, mas a **rota pública de busca global de usuários está bloqueada por segurança**. Portanto, não é uma funcionalidade demonstrável atualmente na interface.
 
 ### PropriedadeRepository
 
@@ -479,13 +414,7 @@ Arquivo:
 backend/repositories/propriedade_repository.py
 ```
 
-Funcionalidade implementada:
-
-```text
-buscar_por_localizacao(localizacao)
-```
-
-Utiliza uma Stored Procedure para realizar a busca das propriedades de acordo com a localização.
+Método existente: `buscar_por_localizacao(localizacao)`. O Repository tem integração para a Procedure `sp_buscar_propriedades_localizacao`, porém a rota atual realiza uma consulta autenticada diretamente no Controller. **É preciso mover a busca para Service/Repository**, preservando o isolamento de contas, para cumprir integralmente o padrão exigido.
 
 ### SafraRepository
 
@@ -495,238 +424,213 @@ Arquivo:
 backend/repositories/safra_repository.py
 ```
 
-Funcionalidade implementada:
+Método existente: `buscar_por_cultura(cultura)`. O Repository tem integração para a Procedure `sp_buscar_safras_cultura`, mas a rota atual consulta SQLAlchemy no Controller. Deve ser refatorada para utilizar um Service específico e o Repository, sempre limitando resultados à conta logada.
+
+## Procedures criadas
+
+A versão antiga do README documentava três Stored Procedures. Os Repositories da versão atual ainda contêm referências a seus nomes; **o `backend/database/create_database.sql` da versão atual cria apenas as tabelas e não instala essas Procedures**. Assim, a equipe não deve declarar sua execução comprovada nesta versão sem verificar a instalação real do banco.
+
+### Usuários
 
 ```text
-buscar_por_cultura(cultura)
+sp_buscar_usuario_nome
 ```
 
-Utiliza a Stored Procedure:
+Consulta especial de busca parcial por nome. Atualmente a pesquisa global está indisponível na API para impedir exposição dos dados de outras contas.
+
+### Propriedades
+
+```text
+sp_buscar_propriedades_localizacao
+```
+
+Consulta especial de propriedades por localização. A implementação atual da rota usa um filtro de propriedade do usuário autenticado, mas ainda precisa respeitar a separação Controller → Service → Repository para a atividade.
+
+### Safras
 
 ```text
 sp_buscar_safras_cultura
 ```
 
-A consulta retorna as safras de acordo com a cultura informada e realiza a ordenação dos resultados.
+Consulta especial de safras por cultura. O endpoint atual filtra safras do usuário autenticado diretamente com SQLAlchemy no Controller, em vez de fazer a chamada ao Repository.
 
-## Procedures criadas
-
-As consultas que vão além do CRUD básico foram implementadas por meio de Stored Procedures no MySQL.
-
-### Usuários
-
-```sql
-DELIMITER $$
-
-CREATE PROCEDURE sp_buscar_usuario_nome(IN p_nome VARCHAR(100))
-
-BEGIN
-
-    SELECT *
-    FROM usuarios
-    WHERE nome LIKE CONCAT('%', p_nome, '%')
-    ORDER BY nome;
-
-END $$
-
-DELIMITER ;
-```
-
-### Propriedades
-
-```sql
-DELIMITER $$
-
-CREATE PROCEDURE sp_buscar_propriedades_localizacao(IN p_localizacao VARCHAR(150))
-
-BEGIN
-
-    SELECT *
-    FROM propriedades
-    WHERE localizacao LIKE CONCAT('%', p_localizacao, '%')
-    ORDER BY nome;
-
-END $$
-
-DELIMITER ;
-```
-
-### Safras
-
-```sql
-DELIMITER $$
-
-CREATE PROCEDURE sp_buscar_safras_cultura(IN p_cultura VARCHAR(100))
-
-BEGIN
-
-    SELECT *
-    FROM safras
-    WHERE cultura = p_cultura
-    ORDER BY ano_safra DESC;
-
-END $$
-
-DELIMITER ;
-```
+> **Segurança:** não é apropriado documentar procedures que retornem senhas ou que permitam buscar informações de contas sem autorização. As chamadas `CALL`, quando utilizadas, devem ficar nos Repositories, e não nas Controllers.
 
 ## Rotas da API
 
 ### Usuários
 
 | Método | Rota | Descrição |
-| ------ | ---- | --------- |
-| GET | `/usuarios` | Lista todos os usuários |
-| GET | `/usuarios/<id>` | Busca um usuário pelo id |
-| GET | `/usuarios/buscar?nome=...` | Busca usuários pelo nome |
-| POST | `/usuarios` | Cadastra um novo usuário |
-| PUT | `/usuarios/<id>` | Atualiza os dados de um usuário |
-| DELETE | `/usuarios/<id>` | Remove um usuário |
+| --- | --- | --- |
+| `POST` | `/usuarios` | Cadastrar usuário |
+| `POST` | `/login` | Autenticar e obter token |
+| `GET` | `/usuarios` | Consultar informações permitidas da própria conta |
+| `GET` | `/usuarios/<id>` | Consultar o próprio perfil |
+| `PUT` | `/usuarios/<id>` | Atualizar o próprio perfil |
+| `DELETE` | `/usuarios/<id>` | Excluir a própria conta (rota presente) |
+| `GET` | `/usuarios/buscar?nome=...` | Bloqueada para pesquisa global de usuários (`403`) |
 
 ### Propriedades
 
 | Método | Rota | Descrição |
-| ------ | ---- | --------- |
-| GET | `/propriedades` | Lista todas as propriedades |
-| GET | `/propriedades/<id>` | Busca uma propriedade pelo id |
-| GET | `/propriedades/buscar?...` | Busca propriedades por localização |
-| POST | `/propriedades` | Cadastra uma nova propriedade |
-| PUT | `/propriedades/<id>` | Atualiza os dados de uma propriedade |
-| DELETE | `/propriedades/<id>` | Remove uma propriedade |
+| --- | --- | --- |
+| `GET` | `/propriedades` | Listar propriedades da conta |
+| `POST` | `/propriedades` | Cadastrar propriedade |
+| `GET` | `/propriedades/<id>` | Consultar propriedade própria |
+| `PUT` | `/propriedades/<id>` | Atualizar propriedade |
+| `DELETE` | `/propriedades/<id>` | Excluir propriedade |
+| `GET` | `/propriedades/buscar?localizacao=...` | Buscar propriedades da conta por localização |
 
 ### Safras
 
 | Método | Rota | Descrição |
-| ------ | ---- | --------- |
-| GET | `/safras` | Lista todas as safras |
-| GET | `/safras/<id>` | Busca uma safra pelo id |
-| GET | `/safras/buscar?cultura=...` | Busca safras por cultura |
-| POST | `/safras` | Cadastra uma nova safra |
-| PUT | `/safras/<id>` | Atualiza os dados de uma safra |
-| DELETE | `/safras/<id>` | Remove uma safra |
+| --- | --- | --- |
+| `GET` | `/safras` | Listar safras da conta (admite filtro por propriedade) |
+| `POST` | `/safras` | Cadastrar safra |
+| `GET` | `/safras/<id>` | Consultar safra própria |
+| `PUT` | `/safras/<id>` | Atualizar safra, inclusive status confirmado |
+| `DELETE` | `/safras/<id>` | Excluir safra |
+| `GET` | `/safras/buscar?cultura=...` | Buscar safras da conta por cultura |
+| `GET` | `/safras/estimar-colheita?cultura=...&data_plantio=AAAA-MM-DD` | Calcular janela de colheita |
+
+### Clima e sistema
+
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| `GET` | `/api/clima?lat=...&lon=...` | Clima atual |
+| `GET` | `/api/clima/previsao?lat=...&lon=...` | Previsão de curto prazo |
+| `GET` | `/api` | Verificar informações básicas da API |
+| `GET` | `/` | Abrir página inicial do AgroRisk |
+
+Os endpoints de dados pessoais, propriedades, safras e clima exigem token na versão atual; o cadastro inicial e o login são públicos. As buscas devem manter o isolamento entre contas.
 
 ## Exemplo de JSON para cadastro de usuário
 
 ```json
 {
-    "nome": "Leonardo Silva",
-    "email": "leonardo@email.com",
-    "senha": "123456"
+  "nome": "Exemplo de Usuário",
+  "email": "exemplo@dominio.com",
+  "senha": "SENHA_DE_TESTE_FORTE"
 }
 ```
+
+A senha é processada no backend e armazenada como **hash**, não como texto simples.
 
 ## Exemplo de JSON para cadastro de propriedade
 
 ```json
 {
-    "usuario_id": 1,
-    "nome": "Fazenda Boa Vista",
-    "localizacao": "Vespasiano - MG",
-    "hectares": 150.50,
-    "tipo_solo": "Argiloso"
+  "nome": "Propriedade Demonstração",
+  "cidade": "Vespasiano",
+  "estado": "MG",
+  "area": 10.5,
+  "perimetro": 1200,
+  "latitude": -19.6914,
+  "longitude": -43.9264,
+  "observacao": "Área de exemplo para o TCC"
 }
 ```
+
+O backend identifica o usuário autenticado pelo token; não basta enviar livremente um `usuario_id` no JSON.
 
 ## Exemplo de JSON para cadastro de safra
 
 ```json
 {
-    "propriedade_id": 1,
-    "nome": "Safra 2026/2027",
-    "cultura": "Soja",
-    "data_plantio": "2026-10-15",
-    "data_colheita": "2027-02-20",
-    "area_plantada": 120.00,
-    "produtividade_esperada": 3500.00,
-    "observacoes": "Safra em planejamento"
+  "propriedade_id": 1,
+  "nome": "Safra Soja 2026/2027",
+  "cultura": "Soja",
+  "ano_safra": "2026",
+  "data_plantio": "2026-10-22",
+  "data_colheita": "2027-02-19",
+  "area_plantada": 2.0,
+  "observacoes": "Safra de demonstração"
 }
 ```
 
+A API valida a propriedade vinculada e os dados enviados. A data usada no exemplo é apenas a referência central da estimativa para essa cultura/data de plantio.
+
 ## Como executar o backend
+
+**Requisitos:** Python e dependências do `requirements.txt`, MySQL/MariaDB disponível, navegador e, para clima real, uma chave OpenWeather.
+
+No Windows, com XAMPP, inicie primeiro o módulo **MySQL** no painel. Não é necessário ligar o Apache para servir as páginas do AgroRisk.
 
 Entre na pasta do backend:
 
-```bash
+```powershell
 cd backend
 ```
 
-Crie o ambiente virtual:
+Crie e ative o ambiente virtual (recomendado):
 
-```bash
+```powershell
 python -m venv venv
-```
-
-Ative o ambiente virtual.
-
-No Windows:
-
-```bash
-venv\Scripts\activate
-```
-
-No Linux ou macOS:
-
-```bash
-source venv/bin/activate
+.\venv\Scripts\Activate.ps1
 ```
 
 Instale as dependências:
 
-```bash
-pip install -r requirements.txt
+```powershell
+python -m pip install -r requirements.txt
 ```
 
-Crie o arquivo `.env` com base no exemplo:
+Crie o arquivo `backend/.env` a partir de `.env.example` (preencha os valores **somente em sua máquina**):
 
-```bash
-cp .env.example .env
+```dotenv
+DATABASE_URL=mysql+pymysql://USUARIO:SENHA@127.0.0.1:3306/agrorisk
+OPENWEATHER_API_KEY=COLE_SUA_CHAVE_AQUI
+SECRET_KEY=COLE_UMA_CHAVE_FORTE_AQUI
+FLASK_DEBUG=False
 ```
 
-Configure a conexão com o banco de dados no arquivo `.env`.
+**Não use os valores de exemplo literalmente.** Se você utiliza XAMPP com `root` sem senha somente em desenvolvimento local, uma conexão possível é `mysql+pymysql://root:@127.0.0.1:3306/agrorisk`. Em produção, utilize credenciais exclusivas e senha forte.
 
-Execute a aplicação:
+Para gerar uma `SECRET_KEY` aleatória, execute:
 
-```bash
+```powershell
+python -c "import secrets; print(secrets.token_urlsafe(48))"
+```
+
+Inicie o servidor:
+
+```powershell
 python app.py
 ```
 
-A API ficará disponível em:
+Abra:
 
 ```text
 http://127.0.0.1:5000
 ```
 
+**Não é necessário abrir o Live Server.** Para executar em Linux/macOS, a ativação do ambiente virtual geralmente é `source venv/bin/activate`.
+
 ## Banco de dados
 
-O projeto utiliza **MySQL** como banco de dados.
+O AgroRisk utiliza **MySQL** (ou MariaDB compatível) e um banco chamado `agrorisk` na configuração local padrão.
 
-O banco utilizado pelo sistema é:
+O arquivo `backend/database/create_database.sql` define as tabelas de instalações novas. **Não execute scripts antigos com `DROP DATABASE` em bancos que contenham dados reais.** Faça backup antes de mudanças. O `db.create_all()` cria tabelas ausentes, mas **não atualiza automaticamente colunas de tabelas antigas**; alterações de estrutura devem ser feitas por migrações controladas.
 
-```text
-agrorisk
-```
-
-Execute o script localizado em:
+Relacionamentos principais:
 
 ```text
-backend/database/create_database.sql
+Usuario (1) ─── (N) Propriedade (1) ─── (N) Safra
 ```
 
-Configure o arquivo `.env` com sua conexão:
-
-```text
-DATABASE_URL=mysql+pymysql://root:@localhost/agrorisk
-```
-
-Caso seu usuário possua senha:
-
-```text
-DATABASE_URL=mysql+pymysql://root:sua_senha@localhost/agrorisk
-```
+Os dados de safras e propriedades ficam vinculados às contas por chaves e regras de acesso no backend. Um banco local não se sincroniza automaticamente entre computadores; para acesso na escola e em casa é necessário hospedar o Flask e conectar todos os usuários a um banco central.
 
 ## Testes das funcionalidades avançadas
 
-As três funcionalidades que vão além do CRUD básico foram implementadas e testadas.
+Os testes automatizados e a demonstração no navegador são complementares. Dentro da pasta `backend`, podem ser executados:
+
+```powershell
+python tests/test_paginas_flask.py
+python tests/test_protecao_contas.py
+python tests/test_clima_service.py
+```
+
+Alguns testes utilizam bancos temporários ou simulações; eles não substituem o teste real com MySQL e as telas do AgroRisk.
 
 ### Busca de usuários por nome
 
@@ -734,7 +638,7 @@ As três funcionalidades que vão além do CRUD básico foram implementadas e te
 GET /usuarios/buscar?nome=Joao
 ```
 
-A busca retorna os usuários que possuem o nome informado, permitindo também encontrar parte do nome.
+**Status:** bloqueada na API atual (`403`), para não expor dados de outras pessoas. Não demonstrar como funcionalidade concluída.
 
 ### Busca de propriedades por localização
 
@@ -742,7 +646,7 @@ A busca retorna os usuários que possuem o nome informado, permitindo também en
 GET /propriedades/buscar?localizacao=Vespasiano
 ```
 
-A busca retorna as propriedades correspondentes à localização informada.
+O código da rota restringe os resultados à conta autenticada. A consulta ainda precisa passar por Service/Repository próprio para aderir integralmente à arquitetura obrigatória.
 
 ### Busca de safras por cultura
 
@@ -750,91 +654,83 @@ A busca retorna as propriedades correspondentes à localização informada.
 GET /safras/buscar?cultura=Soja
 ```
 
-A busca retorna as safras cadastradas para a cultura informada.
+O código da rota restringe resultados às propriedades da conta autenticada. A consulta ainda precisa passar por Service/Repository próprio para aderir integralmente à arquitetura obrigatória.
+
+### Testes do cadastro, acompanhamento e finalização
+
+Na demonstração, conferir se o cadastro retorna sucesso, se a safra aparece na listagem, se pode ser editada e se o status **Finalizada** continua registrado após atualizar a página.
+
+### Testes das estimativas de colheita
+
+Usar a mesma data de plantio para Café, Soja e Milho e comprovar que os intervalos mudam conforme os parâmetros do `EstimarColheitaService`. As estimativas são preliminares, sem modelagem histórica do clima.
 
 ## Tecnologias utilizadas
 
-* Python
+- **Python** e **Flask** — backend e servidor local das páginas.
+- **Flask-SQLAlchemy / SQLAlchemy / PyMySQL** — modelos e acesso ao banco.
+- **MySQL / MariaDB** — persistência de usuários, propriedades e safras.
+- **python-dotenv** — configuração por variáveis de ambiente.
+- **itsdangerous** — tokens assinados e temporários (biblioteca utilizada pela autenticação).
+- **requests** — consulta à API meteorológica.
+- **HTML, CSS e JavaScript** — interface.
+- **Bootstrap** e **Font Awesome** — componentes visuais e ícones.
+- **Leaflet** — mapas e delimitação de áreas.
+- **jsPDF** — exportação do relatório para PDF.
+- **OpenWeather** — clima atual e previsão de curto prazo.
 
-* Flask
+## Diagrama de classes
 
-* Flask SQLAlchemy
+O domínio principal envolve `Usuario`, `Propriedade` e `Safra`, cada uma representada por uma Model SQLAlchemy. O arquivo a ser incluído no repositório é:
 
-* SQLAlchemy
+```text
+docs/diagrama-classes.md
+```
 
-* Flask CORS
+Consulte o [diagrama de classes](docs/diagrama-classes.md). A relação usuário–propriedade–safra deve ser coerente com as chaves estrangeiras do MySQL. O arquivo do diagrama deve ser adicionado ao GitHub junto ao README, pois o link não funcionará se ele não estiver no repositório.
 
-* MySQL
+## Segurança do sistema
 
-* PyMySQL
+A versão atual possui:
 
-* Python Dotenv
+- Armazenamento de senhas com hash.
+- Autenticação por token assinado e temporário, com duração configurada de oito horas.
+- Exigência de token em rotas de dados e verificação de acesso às informações da conta.
+- Variáveis `SECRET_KEY`, `DATABASE_URL` e `OPENWEATHER_API_KEY` no `.env` local.
+- Alguns cabeçalhos HTTP de proteção e configurações voltadas ao uso local.
 
-* HTML
+**Ainda não está pronta para publicação pública:** é necessário implantar HTTPS, proteção contra tentativas repetidas de login, backups, configuração segura de conexão MySQL, revisão de autorização em todos os endpoints e um servidor de produção para Flask. O `.env` deve permanecer fora do Git; credenciais expostas anteriormente precisam ser substituídas.
 
-* CSS
+## Vídeo de demonstração da atividade
 
-* JavaScript
+A entrega exige **vídeo obrigatório de no máximo 5 minutos**, além do commit/push no repositório oficial. Para demonstrar o AgroRisk de hoje, o grupo pode seguir este roteiro, ajustando o tempo às telas efetivamente testadas:
 
-* Bootstrap
+| Tempo sugerido | Demonstração | O que comprovar |
+| --- | --- | --- |
+| 0:00–0:35 | Apresentação do sistema e arquitetura | HTML/JS no Flask, Controller, Service e MySQL |
+| 0:35–1:15 | Cadastro e login | Usuário cadastrado, autenticação e perfil carregado |
+| 1:15–2:10 | Propriedades | Cadastro, listagem, consulta, edição, localização e exclusão em dados de teste |
+| 2:10–3:20 | Safras | Cadastro, listagem, edição e exclusão; vínculo com uma propriedade |
+| 3:20–4:10 | Estimativa e análise | Café, Milho e Soja com janelas diferentes; análise com clima real |
+| 4:10–4:45 | Conclusão e PDF | Confirmar finalização, recarregar e gerar relatório |
+| 4:45–5:00 | Encerramento | Mostrar README, diagrama e persistência dos registros |
 
-* Font Awesome
+Gravar apenas operações que estiverem funcionando, sem expor CPF, senhas, chaves de API, tokens ou dados privados reais. A equipe deve usar **contas, propriedades e safras de demonstração**. Não apagar os próprios dados durante a gravação.
 
-* Leaflet
-
-* Chart.js
+**Antes do envio:** conferir a lista oficial de funcionalidades, o diagrama em `docs/diagrama-classes.md`, o vídeo e o repositório atualizado. A exigência de **20 funcionalidades completas** precisa ser verificada conforme a rubrica do professor, não apenas pela quantidade de telas ou rotas.
 
 ## Status atual do projeto
 
-Nesta etapa foi implementada a arquitetura do backend utilizando Flask e SQLAlchemy, seguindo o padrão **Controller → Service → Repository → Procedure → Banco de Dados**.
+O AgroRisk evoluiu de páginas separadas abertas com Live Server para uma aplicação em que **o Flask entrega tanto o frontend quanto a API**. O projeto já integra usuários, propriedades, safras, mapas, clima real, estimativas preliminares de colheita, análise de safra, confirmação de finalização e relatório PDF.
 
-Foi desenvolvido o CRUD completo das Models **Usuário**, **Propriedade** e **Safra**, incluindo cadastro, listagem, busca por id, atualização e exclusão de registros.
+O sistema funciona localmente com MySQL iniciado pelo XAMPP e Flask disponível em `http://127.0.0.1:5000`, conforme as configurações do ambiente.
 
-Além do CRUD básico, foram implementadas funcionalidades que utilizam consultas específicas no banco de dados por meio de **Repositories e Stored Procedures**:
+### Melhorias planejadas
 
-* Busca de usuários por nome;
+- Adequar e validar os fluxos adicionais para comprovar **20 funcionalidades completas** segundo os critérios da disciplina.
+- Refatorar buscas avançadas para utilizar Services/Repositories sem regras de consulta diretamente nos Controllers.
+- Concluir os testes de segurança e de integração.
+- Preparar hospedagem central com Flask, MySQL, HTTPS e backups.
+- Implementar armazenamento persistente e autenticado da foto de perfil, hoje guardada no navegador.
+- Avaliar séries históricas climáticas e aprimorar as estimativas com dados agronômicos fundamentados.
 
-* Busca de propriedades por localização;
-
-* Busca de safras por cultura.
-
-Os respectivos Controllers e Services foram criados para cada caso de uso, mantendo a separação de responsabilidades entre as camadas da aplicação.
-
-O backend está integrado ao banco de dados MySQL e as funcionalidades avançadas foram testadas por meio das rotas da API.
-
-No frontend, a integração com a API foi iniciada por meio do arquivo `js/api.js`, centralizando as requisições realizadas pelo sistema.
-
-A tela de **Safras** foi atualizada para trabalhar de forma dinâmica, buscando as safras cadastradas e criando os cards automaticamente.
-
-Também foram adicionados:
-
-* Resumo com quantidade total de safras;
-
-* Quantidade de safras em andamento;
-
-* Quantidade de safras finalizadas;
-
-* Área total plantada;
-
-* Identificação automática do status da safra;
-
-* Identificação da cultura;
-
-* Ícones de acordo com a cultura;
-
-* Formatação das datas;
-
-* Botão para monitorar a safra específica;
-
-* Botão para editar a safra específica;
-
-* Botão para excluir uma safra;
-
-* Integração com o `localStorage` para auxiliar no armazenamento das safras no frontend.
-
-A tela de cadastro de safras também passou a utilizar a API para cadastrar novas safras e relacioná-las a uma propriedade.
-
-O sistema ainda está em desenvolvimento. Algumas funcionalidades, como a integração com uma API de clima e o funcionamento completo do monitoramento agrícola baseado em dados climáticos, ainda serão desenvolvidas.
-
-A definição inteligente das datas e recomendações agrícolas será aprimorada posteriormente com a integração de dados climáticos e outras informações necessárias para o monitoramento das safras.
-````
+**Projeto acadêmico:** os dados climáticos e as datas estimadas apoiam a demonstração do TCC, mas não substituem orientação técnica nem garantem uma data de colheita.
