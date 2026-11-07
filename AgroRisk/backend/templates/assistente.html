@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AgroRisk | Assistente com IA</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/agrorisk-aprendizado.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/orientador-limpo.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/orientador-final.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar-unificada.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body class="ag-menu-unificado ag-pagina-orientador ag-orientador-limpo ag-orientador-final">
+{% include '_sidebar.html' %}
+<main class="ag-orientador-layout ag-layout-compacto">
+  <div class="ag-orientador-intro"><div><h1>Assistente AgroRisk com IA</h1><p>Faça perguntas livres sobre sua lavoura e consulte informações da safra.</p></div></div>
+  <section class="ag-orientador-card" aria-labelledby="tituloIA">
+    <div class="ag-contexto-cabecalho"><h2 id="tituloIA">Conversar com Gemini</h2><a href="orientador.html" class="ag-link-suave">Ver análise da safra</a></div>
+    <details class="ag-contexto-opcional" id="agDadosOpcionais"><summary>Usar dados de uma safra na conversa (opcional)</summary>
+      <div class="ag-form-grid ag-selectores-chat">
+        <div class="ag-campo"><label for="propriedadeContexto">Propriedade</label><select id="propriedadeContexto"><option value="">Nenhuma</option></select></div>
+        <div class="ag-campo"><label for="safraContexto">Safra</label><select id="safraContexto" disabled><option value="">Nenhuma</option></select></div>
+      </div>
+      <p class="ag-etiqueta">Somente os dados selecionados serão enviados após sua autorização.</p>
+    </details>
+    <div id="statusOrientador" class="ag-ai-status" role="status">Verificando conexão...</div>
+    <div id="conversaOrientador" class="ag-chat-log" role="log" aria-live="polite" aria-relevant="additions text"></div>
+    <form id="formPerguntaOrientador" class="ag-chat-form">
+      <input id="textoPergunta" maxlength="900" aria-label="Digite sua pergunta" placeholder="Pergunte sobre café, soja, milho, plantio..." required autocomplete="off">
+      <button id="botaoEnviarIA" class="ag-botao ag-botao-principal" type="submit">Enviar</button>
+    </form>
+    <label class="ag-ai-check ag-consentimento"><input type="checkbox" id="consentimentoIA"><span>Autorizo enviar minha pergunta e os dados selecionados ao Gemini (Google).</span></label>
+    <details class="ag-detalhes-discretos"><summary>Opções e privacidade</summary>
+      <label class="ag-ai-check"><input type="checkbox" id="incluirClimaContexto"> Incluir a previsão do tempo da propriedade</label>
+      <p>A IA pode errar. Não envie dados pessoais sensíveis. A conversa não é salva no banco do AgroRisk.</p>
+    </details>
+    <div id="sugestoesOrientador" hidden></div>
+    <div class="ag-chat-rodape"><span>Verifique orientações técnicas antes de decidir.</span><button type="button" id="limparConversaIA" class="ag-botao ag-botao-auxiliar">Limpar conversa</button></div>
+  </section>
+  <p class="ag-texto-rodape">Para calcular uma estimativa, use <a href="orientador.html">Minha safra</a>. Para simular o espaçamento, use <a href="ferramentas.html">Calculadoras</a>.</p>
+</main>
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/orientador.js') }}"></script>
+</body></html>

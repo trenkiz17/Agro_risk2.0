@@ -1,0 +1,29 @@
+<!-- Menu único das páginas internas (rotas são preservadas). -->
+<aside class="ag-sidebar-unificada" aria-label="Menu principal do AgroRisk">
+  <a class="ag-menu-logo" href="dashboard.html" title="AgroRisk — Dashboard">
+    <i class="fa-solid fa-seedling" aria-hidden="true"></i><span>AgroRisk</span>
+  </a>
+  <nav class="ag-menu-links" aria-label="Páginas do sistema">
+    <a href="dashboard.html" title="Dashboard" {% if request.path.endswith('/dashboard.html') %}class="ag-menu-ativo" aria-current="page"{% endif %}>
+      <i class="fa-solid fa-house" aria-hidden="true"></i><span>Dashboard</span>
+    </a>
+    <a href="propriedades.html" title="Minhas Propriedades" {% if request.path.endswith(('/propriedades.html', '/cadastro_propriedade.html', '/monitoramento.html')) %}class="ag-menu-ativo" aria-current="page"{% endif %}>
+      <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i><span>Propriedades</span>
+    </a>
+    <a href="orientador.html" title="Minha Safra" {% if request.path.endswith(('/orientador.html', '/cadastro_safras.html', '/ferramentas.html')) %}class="ag-menu-ativo" aria-current="page"{% endif %}>
+      <i class="fa-solid fa-wheat-awn" aria-hidden="true"></i><span>Minha Safra</span>
+    </a>
+    <a href="relatorios.html" title="Relatórios" {% if request.path.endswith('/relatorios.html') %}class="ag-menu-ativo" aria-current="page"{% endif %}>
+      <i class="fa-solid fa-chart-column" aria-hidden="true"></i><span>Relatórios</span>
+    </a>
+    <a href="assistente.html" title="Assistente IA" {% if request.path.endswith('/assistente.html') %}class="ag-menu-ativo" aria-current="page"{% endif %}>
+      <i class="fa-solid fa-robot" aria-hidden="true"></i><span>Assistente IA</span>
+    </a>
+    <a href="perfil.html" title="Perfil" {% if request.path.endswith('/perfil.html') %}class="ag-menu-ativo" aria-current="page"{% endif %}>
+      <i class="fa-solid fa-user" aria-hidden="true"></i><span>Perfil</span>
+    </a>
+  </nav>
+  <div class="ag-menu-rodape"><a href="login.html" id="btnLogout" title="Sair da conta">
+    <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span>Sair</span>
+  </a></div>
+</aside>

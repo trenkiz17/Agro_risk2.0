@@ -1,0 +1,104 @@
+/* Apenas Orientador: versão limpa. O dashboard e as demais páginas não são afetados. */
+.ag-orientador-limpo{margin:0;background:#f1f5f9;color:#152a21;font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif}
+.ag-orientador-limpo .ag-orientador-topo{background:#13253a;border-bottom:1px solid rgba(255,255,255,.1);padding:13px max(20px,calc((100vw - 1070px)/2))}
+.ag-orientador-limpo .ag-orientador-topo a{font-size:13px;font-weight:600;color:#e9f4fa}
+.ag-orientador-limpo .ag-orientador-marca{font-size:21px!important;white-space:nowrap}
+.ag-orientador-limpo .ag-nav-links{display:flex;gap:22px;flex-wrap:wrap}
+.ag-orientador-limpo .ag-orientador-layout{max-width:1070px;padding:24px 20px 54px}
+.ag-orientador-limpo .ag-orientador-intro{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:19px;padding:0 2px}
+.ag-orientador-limpo .ag-orientador-intro h1{font-size:clamp(25px,3vw,33px);line-height:1.2;letter-spacing:-.7px;margin:5px 0 8px;font-weight:800;color:#192e28}
+.ag-orientador-limpo .ag-orientador-intro p{margin:0;font-size:14px;max-width:660px;color:#65746e;line-height:1.6}
+.ag-orientador-limpo .ag-kicker{font-size:10px;letter-spacing:1.5px;color:#138352;font-weight:800}
+.ag-orientador-limpo .ag-intro-emblema{width:61px;height:61px;display:grid;place-items:center;background:#e5f5eb;color:#18784a;border-radius:18px;font-size:30px}
+.ag-orientador-limpo .ag-navegacao-secoes{display:flex;gap:8px;background:#e5ebef;border:1px solid #dce6e9;padding:6px;border-radius:15px;margin-bottom:16px}
+.ag-orientador-limpo .ag-secao-btn{flex:1;display:flex;gap:8px;align-items:center;justify-content:center;background:transparent;border:1px solid transparent;border-radius:11px;padding:13px 10px;color:#53645e;cursor:pointer;font-weight:700;font-size:14px;transition:background .15s,color .15s}
+.ag-orientador-limpo .ag-secao-btn:hover{color:#147448}
+.ag-orientador-limpo .ag-secao-btn.is-active{color:#125d3d;background:#fff;border-color:#cde5d7;box-shadow:0 2px 6px rgba(26,64,41,.06)}
+.ag-orientador-limpo .ag-secao-btn:focus-visible,.ag-orientador-limpo summary:focus-visible{outline:3px solid #54b77d;outline-offset:2px}
+.ag-orientador-limpo .ag-view[hidden],.ag-orientador-limpo #agContexto[hidden]{display:none!important}
+.ag-orientador-limpo .ag-orientador-card{background:#fff;border:1px solid #dde8e0;border-radius:17px;box-shadow:0 7px 26px rgba(22,59,35,.04);padding:23px;margin:0 0 17px;overflow:visible}
+.ag-orientador-limpo .ag-orientador-card h2{font-size:19px;line-height:1.35;margin:0 0 5px;color:#145b3c}
+.ag-orientador-limpo .ag-orientador-card p{font-size:13px;line-height:1.55;margin:4px 0 11px;color:#65766d}
+.ag-orientador-limpo .ag-section-title{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:16px}
+.ag-orientador-limpo .ag-section-icon{display:grid;place-items:center;background:#ebf7ef;color:#087a47;border-radius:13px;width:42px;height:42px;flex-shrink:0;font-size:19px}
+.ag-orientador-limpo .ag-contexto-rapido{padding:18px 22px}
+.ag-orientador-limpo .ag-contexto-cabecalho{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px}
+.ag-orientador-limpo .ag-contexto-cabecalho h2{font-size:15px;margin:0 0 4px}
+.ag-orientador-limpo .ag-contexto-cabecalho p{font-size:12px;margin:0}
+.ag-orientador-limpo .ag-link-suave{font-size:12px;color:#147c4b;text-decoration:none;font-weight:700;white-space:nowrap}
+.ag-orientador-limpo .ag-form-grid{gap:12px}
+.ag-orientador-limpo .ag-campo label{font-size:12px;color:#30473a}
+.ag-orientador-limpo .ag-campo select,.ag-orientador-limpo .ag-campo input{border-color:#d2dfd7;border-radius:9px;padding:10px 12px;font-size:13px;min-height:42px}
+.ag-orientador-limpo .ag-analise-modos{margin:15px 0 0;padding:4px;background:#f0f5f1}
+.ag-orientador-limpo .ag-modo-tab{padding:10px;font-size:13px}
+.ag-orientador-limpo .ag-modo-painel{padding-top:13px}
+.ag-orientador-limpo .ag-analise-vazio{font-size:13px;background:#f8fbf9;padding:19px}
+.ag-orientador-limpo .ag-analise-acoes{margin:15px 0 0}
+.ag-orientador-limpo .ag-botao{padding:10px 14px;border-radius:10px;font-size:12px;min-height:39px}
+.ag-orientador-limpo .ag-botao-principal{background:#148151;border-color:#148151;color:white}
+.ag-orientador-limpo .ag-botao-auxiliar{background:white;color:#136a42;border-color:#cbded1}
+.ag-orientador-limpo .ag-ai-status{padding:9px 12px;margin:9px 0 12px;font-size:12px;border-radius:8px;background:#f1f7f2;color:#2a7353}
+.ag-orientador-limpo .ag-ai-status.ag-ai-erro{background:#fff7e8;color:#966318}
+.ag-orientador-limpo .ag-resumo-metricas{margin:8px 0}
+.ag-orientador-limpo .ag-resumo-metrica{padding:12px}
+.ag-orientador-limpo .ag-resumo-janela{margin:10px 0}
+.ag-orientador-limpo .ag-ajuda-curta{font-size:12px!important;color:#6a7d71!important;margin:0 0 14px!important}
+.ag-orientador-limpo .ag-refina-grupo{border:1px solid #e0ebe3;background:#fbfdfb;margin:9px 0;padding:14px 16px}
+.ag-orientador-limpo .ag-refina-grupo summary{font-size:13px;line-height:1.5;list-style:revert}
+.ag-orientador-limpo .ag-refina-grupo .ag-etiqueta{font-size:12px;margin:9px 0}
+.ag-orientador-limpo .ag-refina-grupo .ag-form-grid{margin-top:12px}
+.ag-orientador-limpo #formAnaliseAvancada > .ag-campo{margin:14px 0!important}
+.ag-orientador-limpo .ag-detalhes-discretos{border-top:1px solid #ebf0eb;padding-top:12px;margin-top:14px;color:#4f6357;font-size:12px}
+.ag-orientador-limpo .ag-detalhes-discretos summary{cursor:pointer;color:#226349;font-size:12px;font-weight:700}
+.ag-orientador-limpo .ag-detalhes-discretos p{font-size:12px;margin-top:9px}
+.ag-orientador-limpo .ag-resumo-proximos{background:#fafcfb;border-color:#e5eee7}
+.ag-orientador-limpo .ag-resumo-proximos summary{font-size:12px;cursor:pointer;color:#266b46;font-weight:700}
+.ag-orientador-limpo .ag-resumo-proximos ul{margin-top:10px}
+.ag-orientador-limpo .ag-chat-log{height:280px;background:#fafcfb;margin:11px 0;padding:14px}
+.ag-orientador-limpo .ag-chat-bolha{font-size:13px;max-width:92%}
+.ag-orientador-limpo .ag-chat-form input{border:1px solid #cfe0d6;border-radius:10px;font-size:13px;min-height:44px;padding:11px 14px}
+.ag-orientador-limpo .ag-chat-form button{min-width:84px}
+.ag-orientador-limpo .ag-consentimento{padding:11px 13px;background:#f5faf6;border:1px solid #dcebdd;border-radius:10px;margin:13px 0 8px;font-size:12px}
+.ag-orientador-limpo .ag-chat-sugestoes{margin-top:13px}
+.ag-orientador-limpo .ag-chat-sugestoes button{font-size:11px;background:#f5faf6}
+.ag-orientador-limpo .ag-chat-rodape{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:17px;padding-top:13px;border-top:1px solid #e8efea}
+.ag-orientador-limpo .ag-chat-rodape span{font-size:11px;color:#74857b;max-width:550px}
+.ag-orientador-limpo .ag-chat-rodape button{font-size:11px;padding:8px 12px;min-height:auto}
+.ag-orientador-limpo .ag-ferramenta-acordeao{border:1px solid #dce8df;border-radius:12px;margin:10px 0;background:#fbfdfb;overflow:hidden}
+.ag-orientador-limpo .ag-ferramenta-acordeao summary{cursor:pointer;font-size:14px;font-weight:750;color:#1f5f41;padding:18px 17px}
+.ag-orientador-limpo .ag-ferramenta-acordeao[open] summary{border-bottom:1px solid #dce8df;background:#f3f9f5}
+.ag-orientador-limpo .ag-ferramenta-conteudo{padding:20px 18px}
+.ag-orientador-limpo .ag-ferramenta-conteudo p{margin:0 0 15px}
+.ag-orientador-limpo .ag-tempo-card{padding:17px;margin:16px 0 0;border-color:#e2ebe5;box-shadow:none}
+.ag-orientador-limpo .ag-tempo-card h3{font-size:15px}
+.ag-orientador-limpo .ag-tempo-item{padding:12px}
+.ag-orientador-limpo .ag-aviso-curto{font-size:11px!important;margin-top:10px!important}
+.ag-orientador-limpo .ag-rodape-ajuda{max-width:100%;border:1px solid #dce8df;border-radius:12px;background:white;padding:16px;margin-top:7px;color:#30614c}
+.ag-orientador-limpo .ag-rodape-ajuda summary{font-size:13px;font-weight:700;cursor:pointer}
+.ag-orientador-limpo .ag-passo-lista{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:13px}
+.ag-orientador-limpo .ag-passo-lista a{font-size:12px}
+@media(max-width:720px){.ag-orientador-limpo .ag-orientador-topo nav{justify-content:center}.ag-orientador-limpo .ag-nav-links{justify-content:center;gap:12px}.ag-orientador-limpo .ag-intro-emblema{display:none}.ag-orientador-limpo .ag-orientador-layout{padding:20px 14px 40px}.ag-orientador-limpo .ag-orientador-card{padding:19px 16px}.ag-orientador-limpo .ag-passo-lista{grid-template-columns:1fr}.ag-orientador-limpo .ag-chat-log{height:260px}}
+@media(max-width:480px){.ag-orientador-limpo .ag-secao-btn{font-size:12px;gap:4px;padding:11px 5px;flex-direction:column}.ag-orientador-limpo .ag-contexto-cabecalho{align-items:flex-start}.ag-orientador-limpo .ag-chat-form{flex-direction:column}.ag-orientador-limpo .ag-chat-form button{width:100%}.ag-orientador-limpo .ag-analise-acoes .ag-botao{width:100%}}
+
+/* Versão enxuta: somente duas abas visíveis; ferramentas avançadas recolhidas. */
+.ag-orientador-limpo .ag-orientador-intro{margin-bottom:13px}
+.ag-orientador-limpo .ag-orientador-intro h1{font-size:clamp(24px,2.4vw,29px);margin:0 0 5px}
+.ag-orientador-limpo .ag-orientador-intro p{font-size:13px}
+.ag-orientador-limpo .ag-orientador-layout{max-width:920px}
+.ag-orientador-limpo .ag-orientador-card{padding:19px 20px;margin-bottom:13px}
+.ag-orientador-limpo .ag-contexto-rapido{padding:14px 19px}
+.ag-orientador-limpo .ag-contexto-cabecalho{margin-bottom:8px}
+.ag-orientador-limpo .ag-navegacao-secoes{margin-bottom:12px}
+.ag-orientador-limpo .ag-secao-btn{padding:10px}
+.ag-orientador-limpo #mensagemAnalise[hidden],.ag-orientador-limpo .ag-chat-sugestoes[hidden]{display:none!important}
+.ag-orientador-limpo .ag-extras-recolhidos{padding:0;margin-top:14px;background:#fafcfb}
+.ag-orientador-limpo .ag-extras-recolhidos>summary{display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;padding:15px 18px;color:#1b6947;font-weight:750;font-size:13px}
+.ag-orientador-limpo .ag-extras-recolhidos[open]>summary{border-bottom:1px solid #e0eae3}
+.ag-orientador-limpo .ag-extras-descricao{font-size:11px;font-weight:400;color:#748178}
+.ag-orientador-limpo .ag-ferramentas-interior{padding:13px 16px 18px}
+.ag-orientador-limpo .ag-titulo-ferramentas{font-size:14px;margin-bottom:9px}
+.ag-orientador-limpo .ag-ferramenta-acordeao summary{padding:13px 15px}
+.ag-orientador-limpo .ag-resumo-proximos{margin-top:9px}
+.ag-orientador-limpo .ag-analise-acoes{margin:10px 0 0}
+.ag-orientador-limpo .ag-ai-status:empty{display:none!important}
+@media(max-width:650px){.ag-orientador-limpo .ag-extras-recolhidos>summary{display:block}.ag-orientador-limpo .ag-extras-descricao{display:block;margin-top:2px}.ag-orientador-limpo .ag-orientador-card{padding:16px}}

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AgroRisk | Orientador</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/agrorisk-aprendizado.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/orientador-limpo.css') }}">
+</head>
+<body class="ag-pagina-orientador ag-orientador-limpo">
+<header class="ag-orientador-topo">
+  <nav aria-label="Navegação principal">
+    <a class="ag-orientador-marca" href="dashboard.html">🌱 AgroRisk</a>
+    <div class="ag-nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="propriedades.html">Propriedades</a>
+      <a href="safras.html">Safras</a>
+      <a href="relatorios.html">Relatórios</a>
+    </div>
+  </nav>
+</header>
+<main class="ag-orientador-layout">
+  <div class="ag-orientador-intro">
+    <div>
+      <h1>Orientador AgroRisk</h1>
+      <p>Analise sua safra ou tire dúvidas com IA.</p>
+    </div>
+  </div>
+
+  <div class="ag-navegacao-secoes" role="tablist" aria-label="Áreas do Orientador">
+    <button type="button" class="ag-secao-btn is-active" id="agTabAnalise" role="tab" aria-selected="true" aria-controls="agViewAnalise" tabindex="0">Minha safra</button>
+    <button type="button" class="ag-secao-btn" id="agTabIA" role="tab" aria-selected="false" aria-controls="agViewIA" tabindex="-1">Perguntar à IA</button>
+  </div>
+
+  <section class="ag-contexto-rapido ag-orientador-card" id="agContexto" aria-labelledby="tituloSelecaoAnalise">
+    <div class="ag-contexto-cabecalho">
+      <div>
+        <h2 id="tituloSelecaoAnalise">Selecione sua safra</h2>
+      </div>
+      <a href="cadastro_safras.html" class="ag-link-suave">+ Nova safra</a>
+    </div>
+    <div class="ag-form-grid">
+      <div class="ag-campo"><label for="propriedadeContexto">Propriedade</label>
+        <select id="propriedadeContexto"><option value="">Selecione uma propriedade</option></select></div>
+      <div class="ag-campo"><label for="safraContexto">Safra</label>
+        <select id="safraContexto" disabled><option value="">Selecione uma safra</option></select></div>
+    </div>
+  </section>
+
+  <section id="agViewAnalise" role="tabpanel" aria-labelledby="agTabAnalise" class="ag-view">
+    <section class="ag-orientador-card" id="analise-avancada" aria-labelledby="tituloAnaliseAvancada">
+      <div class="ag-section-title"><div><h2 id="tituloAnaliseAvancada">Sua estimativa</h2></div></div>
+      <div id="mensagemAnalise" class="ag-ai-status" role="status">Selecione uma safra para visualizar a análise.</div>
+      <div class="ag-analise-modos" role="tablist" aria-label="Modo da estimativa">
+        <button type="button" id="abaModoSimples" class="ag-modo-tab is-active" role="tab" aria-selected="true" aria-controls="painelAnaliseSimples" tabindex="0">Resumo</button>
+        <button type="button" id="abaModoAvancado" class="ag-modo-tab" role="tab" aria-selected="false" aria-controls="painelAnaliseAvancada" tabindex="-1">Refinar</button>
+      </div>
+      <div id="painelAnaliseSimples" class="ag-modo-painel" role="tabpanel" aria-labelledby="abaModoSimples">
+        <div id="resumoAnaliseSimples" class="ag-analise-vazio" aria-live="polite">Selecione uma safra acima para consultar sua janela de colheita.</div>
+        <div class="ag-analise-acoes">
+          <button type="button" class="ag-botao ag-botao-auxiliar" id="ajudaIASimples" disabled>Perguntar à IA sobre esta safra</button>
+        </div>
+      </div>
+      <div id="painelAnaliseAvancada" class="ag-modo-painel" role="tabpanel" aria-labelledby="abaModoAvancado" hidden>
+        <p class="ag-ajuda-curta">Opcional: informe dados reais para refinar a análise.</p>
+        <form id="formAnaliseAvancada">
+<details class="ag-refina-grupo">
+<summary>Dados da lavoura</summary>
+<div class="ag-form-grid ag-refina-campos">
+<div class="ag-campo"><label for="refCultivar">Espécie ou cultivar</label><input autocomplete="off" id="refCultivar" maxlength="100" placeholder="Ex.: café arábica, cultivar..."/></div>
+<div class="ag-campo"><label for="refIdade">Idade da lavoura (anos)</label><input id="refIdade" max="100" min="0" placeholder="Opcional" step="0.1" type="number"/></div>
+<div class="ag-campo"><label for="refAltitude">Altitude (metros)</label><input id="refAltitude" max="5500" min="-100" placeholder="Opcional" step="1" type="number"/></div>
+<div class="ag-campo"><label for="refIrrigacao">Irrigação</label><select id="refIrrigacao"><option value="">Não informado</option><option value="sim">Sim</option><option value="nao">Não</option></select></div>
+<div class="ag-campo"><label for="refEmergencia">Emergência observada</label><input id="refEmergencia" type="date"/></div>
+<div class="ag-campo"><label for="refFlorada">Florada observada</label><input id="refFlorada" type="date"/></div>
+<div class="ag-campo"><label for="refFrutificacao">Formação de frutos observada</label><input id="refFrutificacao" type="date"/></div>
+<div class="ag-campo"><label for="refAreaUtil">Área efetivamente produtiva (%)</label><input id="refAreaUtil" max="100" min="0.01" placeholder="Em branco = 100%" step="0.1" type="number"/></div>
+</div>
+</details>
+<details class="ag-refina-grupo">
+<summary>Intervalos de colheita</summary>
+<p class="ag-etiqueta">Informe os dias mínimo e máximo segundo uma fonte técnica referente à sua cultura e região. Não use as faixas inventadas ou fornecidas por uma IA sem verificação.</p>
+<div class="ag-form-grid ag-refina-campos">
+<div class="ag-campo"><label for="refCicloMin">Ciclo após plantio — mínimo (dias)</label><input id="refCicloMin" max="2500" min="40" placeholder="Ex.: valor da ficha técnica" step="1" type="number"/></div>
+<div class="ag-campo"><label for="refCicloMax">Ciclo após plantio — máximo (dias)</label><input id="refCicloMax" max="2500" min="40" step="1" type="number"/></div>
+<div class="ag-campo"><label for="refFloradaMin">Da florada à colheita — mínimo (dias)</label><input id="refFloradaMin" max="500" min="60" placeholder="Requer florada observada" step="1" type="number"/></div>
+<div class="ag-campo"><label for="refFloradaMax">Da florada à colheita — máximo (dias)</label><input id="refFloradaMax" max="500" min="60" step="1" type="number"/></div>
+</div>
+<p class="ag-etiqueta">Se você informou florada observada e intervalo florada–colheita, essa referência terá prioridade. Sem parâmetros técnicos, o AgroRisk mantém a janela antiga.</p>
+</details>
+<details class="ag-refina-grupo">
+<summary>Simular produção</summary>
+<p class="ag-etiqueta">Informe três produtividades de referência de sua escolha, em <strong>sacas de 60 kg por hectare</strong>, de uma fonte ou do seu histórico. O AgroRisk multiplica pela área produtiva.</p>
+<div class="ag-form-grid ag-refina-campos">
+<div class="ag-campo"><label for="refProdBaixa">Produtividade baixa (sc/ha)</label><input id="refProdBaixa" max="1000" min="0" placeholder="Opcional" step="any" type="number"/></div>
+<div class="ag-campo"><label for="refProdMedia">Produtividade intermediária (sc/ha)</label><input id="refProdMedia" max="1000" min="0" placeholder="Opcional" step="any" type="number"/></div>
+<div class="ag-campo"><label for="refProdAlta">Produtividade alta (sc/ha)</label><input id="refProdAlta" max="1000" min="0" placeholder="Opcional" step="any" type="number"/></div>
+</div>
+</details>
+<div class="ag-campo" style="margin:14px 0"><label for="refFonte">Fonte dos parâmetros técnicos (recomendado)</label><input id="refFonte" maxlength="350" placeholder="Ex.: ficha técnica da cultivar, histórico próprio, assistência técnica"/></div>
+<button class="ag-botao ag-botao-principal" disabled="" id="botaoSalvarAnalise" type="submit">Salvar e recalcular análise</button>
+</form>
+        <div id="resultadoAnaliseAvancada" class="ag-refina-resultado" aria-live="polite" hidden></div>
+        <div class="ag-analise-acoes"><button type="button" class="ag-botao ag-botao-auxiliar" id="ajudaIAAvancada">Ajuda da IA</button></div>
+        <details class="ag-detalhes-discretos"><summary>Como o cálculo funciona?</summary><p>Os parâmetros são salvos vinculados à safra. Sem referência técnica suficiente, o AgroRisk mantém a janela inicial. Os cenários de produção não são previsões.</p></details>
+      </div>
+    </section>
+  <details class="ag-orientador-card ag-extras-recolhidos" id="agFerramentasExtras">
+    <summary>Outras ferramentas <span class="ag-extras-descricao">Cálculo de mudas e janela de colheita</span></summary>
+    <section class="ag-ferramentas-interior" aria-labelledby="tituloFerramentas">
+          <h2 class="ag-titulo-ferramentas" id="tituloFerramentas">Calculadoras</h2>
+          <details class="ag-ferramenta-acordeao" id="agFerramentaMudas">
+            <summary>🌱 Calcular capacidade de plantio</summary>
+            <div class="ag-ferramenta-conteudo">
+              
+              <form id="formMudas">
+    <div class="ag-form-grid">
+    <div class="ag-campo"><label for="areaHa">Área total (hectares)</label><input id="areaHa" max="100000" min="0.01" required="" step="any" type="number" value="2"/></div>
+    <div class="ag-campo"><label for="areaUtil">Percentual de área plantável (%)</label><input id="areaUtil" max="100" min="1" required="" step="any" type="number" value="100"/></div>
+    <div class="ag-campo"><label for="espLinhas">Espaçamento entre linhas (m)</label><input id="espLinhas" max="100" min="0.1" placeholder="Informe o espaçamento" required="" step="any" type="number"/></div>
+    <div class="ag-campo"><label for="espPlantas">Espaçamento entre plantas (m)</label><input id="espPlantas" max="100" min="0.1" placeholder="Informe o espaçamento" required="" step="any" type="number"/></div>
+    </div>
+    <button class="ag-botao ag-botao-principal" style="margin-top:15px" type="submit">Calcular capacidade teórica</button>
+    </form>
+              <div id="resultadoMudas" role="status" aria-live="polite" class="ag-resultado" hidden></div>
+              <p class="ag-aviso-curto">Não substitui a definição de espaçamento e manejo por um profissional.</p>
+            </div>
+          </details>
+          <details class="ag-ferramenta-acordeao" id="agFerramentaColheita">
+            <summary>📅 Simular janela de colheita</summary>
+            <div class="ag-ferramenta-conteudo">
+              
+              <form id="formEstimativaOrientador">
+    <div class="ag-form-grid">
+    <div class="ag-campo"><label for="culturaOrientador">Cultura</label><select id="culturaOrientador"><option value="Café">Café — lavoura nova</option><option value="Soja">Soja</option><option value="Milho">Milho</option></select></div>
+    <div class="ag-campo"><label for="dataOrientador">Data de plantio</label><input id="dataOrientador" required="" type="date"/></div>
+    </div>
+    <button class="ag-botao ag-botao-principal" style="margin-top:15px" type="submit">Consultar estimativa do AgroRisk</button>
+    </form>
+              <div id="resultadoEstimativaOrientador" role="status" aria-live="polite" class="ag-resultado" hidden></div>
+              <section class="ag-tempo-card" aria-labelledby="tituloFasesOrientador">
+                <h3 id="tituloFasesOrientador">Etapas de acompanhamento</h3>
+                <div id="linhaTempoOrientador"><p class="ag-tempo-vazio">Selecione cultura e plantio para consultar.</p></div>
+              </section>
+            </div>
+          </details>
+        </section>
+  </details>
+  </section>
+
+  <section id="agViewIA" role="tabpanel" aria-labelledby="agTabIA" class="ag-view" hidden>
+    <section class="ag-orientador-card ag-chat-card" aria-labelledby="tituloPerguntas">
+      <div class="ag-section-title"><div><h2 id="tituloPerguntas">Pergunte à IA</h2></div></div>
+      <div id="statusOrientador" class="ag-ai-status" role="status">Verificando IA...</div>
+      <div id="conversaOrientador" class="ag-chat-log" role="log" aria-live="polite" aria-relevant="additions text"></div>
+      <form id="formPerguntaOrientador" class="ag-chat-form">
+        <input id="textoPergunta" maxlength="900" aria-label="Sua pergunta" placeholder="Digite sua pergunta sobre a lavoura..." required autocomplete="off">
+        <button id="botaoEnviarIA" class="ag-botao ag-botao-principal" type="submit">Enviar</button>
+      </form>
+      <label class="ag-ai-check ag-consentimento"><input type="checkbox" id="consentimentoIA"> <span>Autorizo enviar a pergunta e os dados selecionados para o Gemini (Google).</span></label>
+      <details class="ag-detalhes-discretos ag-opcoes-ia"><summary>Mais opções e privacidade</summary>
+        <label class="ag-ai-check"><input type="checkbox" id="incluirClimaContexto"> Incluir previsão do tempo disponível da propriedade</label>
+        <p>O histórico recente e os dados selecionados são enviados somente após autorização. Evite informações pessoais sensíveis. A conversa não é salva no banco e a IA pode errar.</p>
+      </details>
+      <div class="ag-chat-sugestoes" id="sugestoesOrientador" hidden></div>
+      <div class="ag-chat-rodape"><span>A IA pode errar. Confira orientações técnicas.</span><button type="button" id="limparConversaIA" class="ag-botao ag-botao-auxiliar">Limpar conversa</button></div>
+    </section>
+  </section>
+
+</main>
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/linhaTempoAgricola.js') }}"></script>
+<script src="{{ url_for('static', filename='js/orientador-limpo.js') }}"></script>
+<script src="{{ url_for('static', filename='js/orientador.js') }}"></script>
+<script src="{{ url_for('static', filename='js/analiseAvancada.js') }}"></script>
+</body>
+</html>
