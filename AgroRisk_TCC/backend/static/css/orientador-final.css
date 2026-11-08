@@ -1,0 +1,20 @@
+/* AgroRisk: análise simples na própria página e assistente em tela separada. */
+.ag-orientador-final .ag-layout-compacto{max-width:780px;padding-top:24px}
+.ag-orientador-final .ag-orientador-intro h1{font-size:clamp(24px,3vw,31px)}
+.ag-orientador-final .ag-orientador-card{padding:24px;margin-bottom:16px}
+.ag-orientador-final .ag-contexto-cabecalho h2{font-size:17px}
+.ag-orientador-final .ag-simples-safra{color:#164f35;font-size:18px;font-weight:750;margin:12px 0}
+.ag-orientador-final .ag-acoes-reduzidas{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:18px}
+.ag-orientador-final .ag-acoes-reduzidas a.ag-botao{text-decoration:none}
+.ag-orientador-final .ag-texto-rodape{color:#627769;font-size:12px;line-height:1.6}
+.ag-orientador-final .ag-contexto-opcional{background:#f7faf8;border:1px solid #dce8e0;border-radius:12px;margin:13px 0;padding:0}
+.ag-orientador-final .ag-contexto-opcional summary{cursor:pointer;font-size:13px;font-weight:750;color:#175e3c;padding:15px}
+.ag-orientador-final .ag-contexto-opcional .ag-selectores-chat{padding:0 15px 12px}
+.ag-orientador-final .ag-contexto-opcional p{padding:0 15px 8px}
+.ag-orientador-final .ag-chat-log{height:min(42vh,360px);min-height:240px}
+.ag-orientador-final .ag-botao-calcular{margin-top:15px}
+.ag-orientador-final .ag-ferramenta-acordeao{margin:14px 0}
+.ag-orientador-final .ag-ferramenta-acordeao>summary{padding:17px}
+.ag-orientador-final #mensagemAnalise[hidden]{display:none}
+@media(max-width:600px){.ag-orientador-final .ag-orientador-card{padding:18px 15px}.ag-orientador-final .ag-acoes-reduzidas{gap:10px}.ag-orientador-final .ag-acoes-reduzidas>a{width:100%;text-align:center}}
+.ag-safras-consulta{margin:0 0 14px}
