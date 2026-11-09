@@ -897,4 +897,4 @@ O Assistente permite **perguntas livres**, com resposta gerada pelo Gemini por u
 
 Não há pesquisa web ao vivo integrada ao Gemini, e a IA pode cometer erros. Ela não deve ser utilizada para prescrever aplicações perigosas, prometer produtividade ou substituir um profissional habilitado.
 
-Para detalhes de configuração, privacidade, fluxo Controller → Service e testes, consulte [LEIA-ME-IA-GEMINI.md](LEIA-ME-IA-GEMINI.md). Para a reorganização das telas, consulte [LEIA-ME-MINHA-SAFRA-UNIFICADA.md](LEIA-ME-MINHA-SAFRA-UNIFICADA.md) e [LEIA-ME-AJUSTES-FINAIS-MENU.md](LEIA-ME-AJUSTES-FINAIS-MENU.md).
+
