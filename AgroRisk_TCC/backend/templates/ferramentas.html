@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AgroRisk | Calculadoras</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/agrorisk-aprendizado.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/orientador-limpo.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/orientador-final.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar-unificada.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-ui.css') }}?v=20261107b">
+</head>
+<body class="ag-menu-unificado ag-pagina-orientador ag-orientador-limpo ag-orientador-final">
+{% include '_sidebar.html' %}
+<main class="ag-orientador-layout ag-layout-compacto">
+  <div class="ag-orientador-intro"><div><h1>Calculadoras agrícolas</h1><p>Simule quantidades de plantio e consulte uma janela preliminar de colheita.</p></div></div>
+  <section class="ag-orientador-card">
+    <details class="ag-ferramenta-acordeao"><summary>🌱 Capacidade teórica de plantio</summary><div class="ag-ferramenta-conteudo">
+      <form id="formMudas"><div class="ag-form-grid">
+        <div class="ag-campo"><label for="areaHa">Área total (ha)</label><input id="areaHa" type="number" step="any" min="0.01" max="100000" value="2" required></div>
+        <div class="ag-campo"><label for="areaUtil">Área plantável (%)</label><input id="areaUtil" type="number" step="any" min="1" max="100" value="100" required></div>
+        <div class="ag-campo"><label for="espLinhas">Espaçamento entre linhas (m)</label><input id="espLinhas" type="number" step="any" min="0.1" max="100" required></div>
+        <div class="ag-campo"><label for="espPlantas">Espaçamento entre plantas (m)</label><input id="espPlantas" type="number" step="any" min="0.1" max="100" required></div>
+      </div><button class="ag-botao ag-botao-principal ag-botao-calcular" type="submit">Calcular</button></form>
+      <div id="resultadoMudas" class="ag-resultado" role="status" hidden></div><p class="ag-etiqueta">Simulação geométrica, não recomendação de espaçamento.</p>
+    </div></details>
+    <details class="ag-ferramenta-acordeao"><summary>📅 Janela preliminar de colheita</summary><div class="ag-ferramenta-conteudo">
+      <form id="formEstimativaOrientador"><div class="ag-form-grid">
+        <div class="ag-campo"><label for="culturaOrientador">Cultura</label><select id="culturaOrientador"><option value="Café">Café — lavoura nova</option><option value="Soja">Soja</option><option value="Milho">Milho</option></select></div>
+        <div class="ag-campo"><label for="dataOrientador">Data de plantio</label><input id="dataOrientador" type="date" required></div>
+      </div><button class="ag-botao ag-botao-principal ag-botao-calcular" type="submit">Consultar estimativa</button></form>
+      <div id="resultadoEstimativaOrientador" class="ag-resultado" role="status" hidden></div>
+      <section class="ag-tempo-card"><h3>Etapas de acompanhamento</h3><div id="linhaTempoOrientador"><p class="ag-tempo-vazio">Informe a cultura e a data do plantio.</p></div></section>
+    </div></details>
+  </section>
+  <p class="ag-texto-rodape">Confira os resultados no campo e com referências agronômicas da sua região.</p>
+</main>
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/linhaTempoAgricola.js') }}"></script>
+<script src="{{ url_for('static', filename='js/orientador.js') }}"></script>
+</body></html>
