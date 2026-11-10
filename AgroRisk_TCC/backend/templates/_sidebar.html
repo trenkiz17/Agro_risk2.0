@@ -1,0 +1,109 @@
+<button class="ag-mobile-menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="ag-sidebar-unificada">
+  <span class="ag-menu-glyph" aria-hidden="true">☰</span>
+</button>
+<div class="ag-sidebar-backdrop" hidden></div>
+
+<aside class="ag-sidebar-unificada" id="ag-sidebar-unificada" aria-label="Menu principal do AgroRisk">
+  <a class="ag-menu-logo" href="dashboard.html" title="AgroRisk — Dashboard">
+    <i class="fa-solid fa-seedling" aria-hidden="true"></i><span>AgroRisk</span>
+  </a>
+  <nav class="ag-menu-links" aria-label="Páginas do sistema">
+    <a href="dashboard.html" title="Dashboard" {% if request.path.endswith('/dashboard.html') %}class="ag-menu-ativo" aria-current="page"{% endif %}>
+      <i class="fa-solid fa-house" aria-hidden="true"></i><span>Dashboard</span>
+    </a>
+    <a href="propriedades.html" title="Minhas Propriedades" {% if request.path.endswith(('/propriedades.html', '/cadastro_propriedade.html', '/monitoramento.html')) %}class="ag-menu-ativo" aria-current="page"{% endif %}>
+      <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i><span>Propriedades</span>
+    </a>
+    <a href="orientador.html" title="Minha Safra" {% if request.path.endswith(('/orientador.html', '/cadastro_safras.html', '/ferramentas.html')) %}class="ag-menu-ativo" aria-current="page"{% endif %}>
+      <i class="fa-solid fa-wheat-awn" aria-hidden="true"></i><span>Minha Safra</span>
+    </a>
+    <a href="relatorios.html" title="Relatórios" {% if request.path.endswith('/relatorios.html') %}class="ag-menu-ativo" aria-current="page"{% endif %}>
+      <i class="fa-solid fa-chart-column" aria-hidden="true"></i><span>Relatórios</span>
+    </a>
+    <a href="assistente.html" title="Assistente IA" {% if request.path.endswith('/assistente.html') %}class="ag-menu-ativo" aria-current="page"{% endif %}>
+      <i class="fa-solid fa-robot" aria-hidden="true"></i><span>Assistente IA</span>
+    </a>
+    <a href="perfil.html" title="Perfil" {% if request.path.endswith('/perfil.html') %}class="ag-menu-ativo" aria-current="page"{% endif %}>
+      <i class="fa-solid fa-user" aria-hidden="true"></i><span>Perfil</span>
+    </a>
+  </nav>
+  <div class="ag-menu-rodape"><a href="login.html" id="btnLogout" title="Sair da conta">
+    <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span>Sair</span>
+  </a></div>
+</aside>
+
+<script>
+(function () {
+  const body = document.body;
+  const toggle = document.querySelector('.ag-mobile-menu-toggle');
+  const sidebar = document.querySelector('.ag-sidebar-unificada');
+  const backdrop = document.querySelector('.ag-sidebar-backdrop');
+  const toggleIcon = toggle ? toggle.querySelector('.ag-menu-glyph') : null;
+  if (!body || !toggle || !sidebar || !backdrop) return;
+
+  const mediaMobile = window.matchMedia('(max-width: 768px)');
+
+  function syncBackdrop() {
+    const open = body.classList.contains('ag-mobile-sidebar-open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+    if (toggleIcon) {
+      toggleIcon.textContent = open ? '✕' : '☰';
+    }
+    backdrop.hidden = !open;
+  }
+
+  function openMenu() {
+    if (!mediaMobile.matches) return;
+    body.classList.add('ag-mobile-sidebar-open');
+    syncBackdrop();
+  }
+
+  function closeMenu() {
+    body.classList.remove('ag-mobile-sidebar-open');
+    syncBackdrop();
+  }
+
+  function toggleMenu() {
+    if (body.classList.contains('ag-mobile-sidebar-open')) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  }
+
+  toggle.addEventListener('click', toggleMenu);
+  backdrop.addEventListener('click', closeMenu);
+
+  sidebar.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      if (mediaMobile.matches) closeMenu();
+    });
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && body.classList.contains('ag-mobile-sidebar-open')) {
+      closeMenu();
+      toggle.focus();
+    }
+  });
+
+  function handleViewportChange() {
+    if (!mediaMobile.matches) {
+      closeMenu();
+      backdrop.hidden = true;
+    } else {
+      syncBackdrop();
+    }
+  }
+
+  if (typeof mediaMobile.addEventListener === 'function') {
+    mediaMobile.addEventListener('change', handleViewportChange);
+  } else if (typeof mediaMobile.addListener === 'function') {
+    mediaMobile.addListener(handleViewportChange);
+  }
+
+  syncBackdrop();
+  handleViewportChange();
+})();
+</script>
