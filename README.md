@@ -6,6 +6,8 @@
 
 **TCC • Técnico em Informática • 2026**
 
+**Atualização para a rubrica do TCC:** além das funcionalidades documentadas abaixo, o projeto agora possui **frontend independente na porta 5500** e **API Flask na porta 5000**, com requisições HTTP entre os dois processos. O modo de execução anterior, com páginas e API juntas na porta 5000, continua disponível por compatibilidade, mas **não demonstra a separação de servidores exigida pela rubrica**.
+
 **Documentação atualizada em 07/11/2026:** esta versão reúne **Minhas Propriedades**, **Minha Safra unificada**, **Monitoramento**, **Relatórios em PDF**, **Assistente IA (Gemini)** e o **Dashboard original**. O cadastro, a edição e a exclusão continuam disponíveis nas telas de gestão. Recursos agrícolas avançados permanecem no código, mas foram retirados da navegação principal para simplificar a experiência.
 
 > **Projeto acadêmico:** as janelas de colheita são referências preliminares. O sistema não garante produtividade, risco climático futuro ou resultado econômico.
@@ -14,7 +16,9 @@
 ![Flask](https://img.shields.io/badge/Flask-API-1B5E20?logo=flask&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-Banco_de_Dados-4479A1?logo=mysql&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-Frontend-F7DF1E?logo=javascript&logoColor=black)
-![Status](https://img.shields.io/badge/Status-Em_desenvolvimento-F5A623)
+![Status](https://img.shields.io/badge/Status-TCC_em_testes-F5A623)
+![Mobile](https://img.shields.io/badge/Interface-Responsiva-22C55E?logo=css3&logoColor=white)
+![Cloudflare](https://img.shields.io/badge/Cloudflare-Tunnel-FF7A00?logo=cloudflare&logoColor=white)
 
 **Dashboard • Propriedades e mapas • Minha Safra • Clima • PDF • Assistente IA**
 
@@ -30,7 +34,7 @@ A plataforma utiliza **Flask + SQLAlchemy + MySQL**, mapas **Leaflet/OpenStreetM
 
 A interface foi reorganizada para evitar páginas duplicadas. **Minha Safra** concentra o cadastro, a seleção, o resumo, a edição e a exclusão. **Relatórios** apresenta informações complementares e a exportação de documentos. **Propriedades** leva à listagem de fazendas, e não diretamente ao cadastro.
 
-> **Versão de referência:** pacote final do AgroRisk com as imagens do `index.html` atualizadas, em 07/11/2026. Os arquivos e endpoints descritos abaixo foram conferidos no código dessa versão. O funcionamento com MySQL, OpenWeather e Gemini reais ainda exige testes no ambiente do grupo; a documentação não comprova, sozinha, os critérios da rubrica.
+> **Versão de referência:** `AgroRisk_TCC` com a interface mobile e as imagens do `index.html` preservadas e a separação entre frontend e API adicionada. Os arquivos e endpoints descritos abaixo se referem ao pacote TCC corrigido. O funcionamento com MySQL, OpenWeather, Gemini e os fluxos da apresentação precisa ser comprovado no ambiente do grupo; documentação e sintaxe isoladas não garantem pontuação na rubrica.
 
 ### Navegação
 
@@ -40,6 +44,10 @@ A interface foi reorganizada para evitar páginas duplicadas. **Minha Safra** co
 - [Estrutura do projeto](#estrutura-do-projeto)
 - [Arquitetura utilizada](#arquitetura-utilizada)
 - [Como executar](#como-executar-o-backend)
+- [Execução em dois servidores (TCC)](#execução-em-dois-servidores-versão-tcc)
+- [Interface responsiva para celular](#interface-responsiva-para-celular)
+- [Cloudflare Tunnel e link público](#cloudflare-tunnel-e-link-público)
+- [Publicação no GitHub](#organização-do-repositório-no-github)
 - [Rotas da API](#rotas-da-api)
 - [Banco de dados e segurança](#banco-de-dados)
 - [Testes e critérios da apresentação](#conferência-para-a-rubrica)
@@ -201,22 +209,47 @@ O `index.html` foi atualizado para utilizar imagens com tema agrícola e prévia
 
 **Arquivos de imagem:** `backend/static/img/dashboard-preview.png`, `backend/static/img/dashboard-real.png`, `backend/static/img/dashboard.png` e `backend/static/img/agricultura.jpg`.
 
+## Interface responsiva para celular
+
+O sistema possui uma interface para computador e uma adaptação para **celulares**, sem criar páginas ou rotas duplicadas. Os layouts são ajustados de acordo com a largura da tela.
+
+| Elemento | Computador | Celular |
+|---|---|---|
+| **Navegação** | Barra lateral fixa com os links principais. | Menu recolhível, acionado pelo botão superior esquerdo; fecha ao tocar fora ou em um link. |
+| **Dashboard** | Indicadores em grade ampla. | Indicadores compactos, com menor espaçamento e reorganização em colunas conforme a tela. |
+| **Formulários** | Campos distribuídos em linhas e colunas. | Campos, botões e cartões ajustados para uso por toque. |
+| **Mapas e monitoramento** | Painéis com área de trabalho maior. | Área útil adaptada para telas menores, evitando rolagem horizontal. |
+| **Relatórios e Minha Safra** | Cards e filtros em layout amplo. | Conteúdo reordenado, mantendo os fluxos e as ações disponíveis. |
+
+**Arquivos da interface:** `backend/templates/_sidebar.html`, `backend/static/css/sidebar-unificada.css`, `backend/static/css/mobile-ui.css` e os CSS específicos de cada página. A navegação mobile foi ajustada para não deixar uma camada escura sobre os links do menu.
+
+> **Nota:** melhorias de CSS e navegação não substituem os testes das funções. Login, MySQL, Gemini, OpenWeather e emissão de PDF precisam ser verificados em dispositivo real antes da apresentação.
+
 ## Estrutura do projeto
 
 ```text
-AgroRisk/
+Agro_risk2.0/                  # Estrutura da branch agrorisk-tcc no GitHub
 ├── README.md
 ├── .gitignore
-├── LEIA-ME-*.md                  # Guias e histórico de alterações
+├── LEIA-ME-*.md                   # Guias e histórico de alterações
+├── INICIAR_API.ps1                # Opcional: API na porta 5000
+├── INICIAR_FRONTEND.ps1           # Opcional: frontend na porta 5500
+├── INICIAR_CLOUDFLARE.ps1         # Opcional: acesso público ao frontend
+├── frontend/
+│   └── server.py                 # Servidor de telas + proxy HTTP para API
 ├── docs/
 │   ├── diagrama-classes.md
+│   ├── fluxogramas-casos-de-uso.md
+│   ├── GUIA-RUBRICA-E-APRESENTACAO.md
+│   ├── RUBRICA_ATUALIZADA_AGRORISK_TCC.md
 │   ├── REVISAO_RUBRICA_ETAPA_FINAL.md
-│   └── backup_interface/       # Versões anteriores da interface
+│   └── backup_interface/        # Interface técnica anterior arquivada
 └── backend/
-    ├── app.py                   # App factory, rotas e inicialização
+    ├── app.py                    # API Flask e modo legado opcional
     ├── config.py
     ├── requirements.txt
-    ├── .env.example             # Modelo sem credenciais reais
+    ├── requirements-dev.txt
+    ├── .env.example              # Exemplo público, sem chaves reais
     ├── controllers/
     │   ├── usuario_controller.py
     │   ├── propriedade_controller.py
@@ -247,22 +280,23 @@ AgroRisk/
     ├── database/
     │   └── create_database.sql
     ├── templates/
-    │   ├── _sidebar.html        # Menu lateral unificado
-    │   ├── index.html           # Página inicial pública
+    │   ├── _sidebar.html         # Menu único, também responsivo
+    │   ├── index.html            # Página inicial pública
     │   ├── login.html / cadastro.html
     │   ├── dashboard.html / perfil.html
     │   ├── propriedades.html / cadastro_propriedade.html
-    │   ├── orientador.html      # Minha Safra unificada
+    │   ├── orientador.html       # Minha Safra unificada
     │   ├── cadastro_safras.html
     │   ├── monitoramento.html
     │   ├── relatorios.html
-    │   ├── assistente.html      # Chat Gemini
-    │   ├── ferramentas.html     # Calculadoras
-    │   └── safras.html         # Rota legada redirecionada
+    │   ├── assistente.html       # Chat Gemini
+    │   ├── ferramentas.html     # Calculadoras opcionais
+    │   └── safras.html          # URL legada, redirecionada
     ├── static/
     │   ├── css/
     │   │   ├── style.css / index.css
     │   │   ├── sidebar-unificada.css
+    │   │   ├── mobile-ui.css    # Ajustes compactos em telas pequenas
     │   │   ├── minha-safra-unificada.css
     │   │   └── outros CSS de páginas
     │   ├── js/
@@ -283,56 +317,63 @@ AgroRisk/
         ├── test_protecao_contas.py
         ├── test_clima_service.py
         ├── test_orientador_ia.py
-        └── test_analise_avancada.py
+        ├── test_analise_avancada.py
+        ├── test_separacao_servidores.py
+        └── test_consultas_repository.py
 ```
 
-**Execução atual:** HTML e JavaScript são servidos pelo **Flask** a partir de `templates/` e `static/`. Não é necessário usar o Live Server. A aplicação web e a API compartilham a **mesma origem**; essa informação é relevante para a rubrica de cliente-servidor.
+**Execução da versão TCC:** o servidor `frontend/server.py` entrega HTML, CSS e JavaScript na **porta 5500**; `backend/app.py`, com `AGRORISK_API_ONLY=1`, atende apenas à API na **porta 5000**. O frontend encaminha as chamadas HTTP de dados para o backend sem acesso direto ao MySQL. Não é necessário usar o Live Server. O modo antigo com páginas e API no Flask é mantido apenas para compatibilidade.
 
 ## Arquitetura utilizada
 
 ```text
-Navegador
-  HTML + CSS + JavaScript (templates/static)
-                  |
-                  | HTTP / JSON + Bearer token
-                  v
-              API Flask
-                  |
-             Controllers
-                  |
-               Services  ----------> OpenWeather / Gemini (APIs externas)
-                  |
-          Models / Repositories
-                  |
-                MySQL
+Navegador / celular
+  HTML + CSS + JavaScript
+            |
+            | HTTP na porta 5500 (ou Cloudflare Tunnel)
+            v
+  Frontend Flask (frontend/server.py, porta 5500)
+            |
+            | Proxy HTTP para API na porta 5000
+            v
+  API Flask (backend/app.py, AGRORISK_API_ONLY=1)
+            |
+       Controllers
+            |
+         Services ----------> OpenWeather / Gemini (APIs externas)
+            |
+   Repositories / Models
+            |
+          MySQL
 ```
 
 Cada camada tem uma responsabilidade:
 
-- **Frontend:** apresenta os formulários e resultados, guarda temporariamente o token do login e envia HTTP via `static/js/api.js`.
+- **Frontend:** apresenta as telas, recebe formulários, mantém temporariamente o token do login e envia requisições para a mesma origem pública (`5500`). O servidor frontend realiza o encaminhamento HTTP para a API local.
 - **Controller:** recebe as rotas HTTP, interpreta parâmetros, obtém a identidade autenticada e devolve JSON.
-- **Service:** valida regras de negócio, calcula janelas de colheita e coordena os fluxos.
+- **Service:** aplica regras de negócio, valida propriedades e safras e coordena os casos de uso, inclusive a estimativa de janela de colheita.
 - **Model:** representa tabelas e relacionamentos via SQLAlchemy.
-- **Repository:** concentra consultas específicas e o acesso aos parâmetros opcionais da safra.
+- **Repository:** concentra consultas e acesso a dados; as buscas principais de propriedades e safras passaram pelos Services e Repositories com filtro por conta.
 - **Banco:** persiste usuários, propriedades, safras e a tabela opcional `safra_parametros`.
-- **Serviços externos:** o Flask consulta OpenWeather e Gemini; suas chaves não devem ir ao frontend.
+- **Serviços externos:** a API consulta OpenWeather e Gemini; suas chaves não devem ir ao frontend.
 
-> **Pendência arquitetural real:** as rotas de busca por localização e por cultura ainda executam SQLAlchemy diretamente em alguns **Controllers**, embora existam Services/Repositories alternativos. Para pontuar integralmente na rubrica é necessário demonstrar o caminho efetivo das requisições e refatorar onde exigido.
+> **Critério de separação:** são dois processos locais e servidores HTTP diferentes. O frontend não conecta diretamente ao banco. É importante apresentar ambos os terminais, uma requisição da interface chegando à API e a resposta do banco. O proxy do frontend não elimina a necessidade de comprovar o fluxo HTTP real à banca.
 
-> **Cliente-servidor:** existem requisições HTTP entre JavaScript e API, mas as páginas e a API são hospedadas pelo **mesmo processo Flask** na versão atual. Caso a rubrica exija servidores independentes, isso ainda precisa ser implementado e validado.
+> **Organização da API em camadas:** houve melhorias nas consultas de propriedades e safras, porém a existência das pastas não comprova sozinha os 7 pontos. É necessário validar os fluxos completos, responsabilidades e resultados reais com MySQL. As integrações externas podem falhar quando a internet ou as chaves estiverem indisponíveis.
 
 ## Integração do Frontend com a API
 
-A comunicação com o backend é centralizada em `backend/static/js/api.js`. As páginas usam a mesma origem de onde foram servidas pelo Flask:
+A comunicação com a API é centralizada em `backend/static/js/api.js`. As páginas usam a mesma origem pública do servidor frontend; `frontend/server.py` encaminha as rotas de dados via HTTP ao Flask da API, evitando expor a porta 5000 ao navegador:
 
 ```javascript
 const API_URL = window.location.origin;
 ```
 
-Na execução local padrão:
+Na execução recomendada para o TCC:
 
 ```text
-http://127.0.0.1:5000
+http://127.0.0.1:5500     # site, HTML/CSS/JS e proxy HTTP
+http://127.0.0.1:5000     # API Flask separada
 ```
 
 O frontend utiliza **GET, POST, PUT e DELETE** para os cadastros e consultas. Nas rotas protegidas, envia `Authorization: Bearer <token>`; o backend verifica o token e o acesso à conta. O navegador **não substitui o MySQL** como repositório central de propriedades e safras.
@@ -485,7 +526,7 @@ Essa API permanece disponível para integração/testes, mas sua interface técn
 
 ## Repositories utilizados
 
-Os Repositories existentes encapsulam consultas específicas ou persistência de parâmetros avançados. Nem todas as rotas de busca utilizam os Repositories no fluxo atual; essa é uma pendência que precisa ser demonstrada corretamente à banca.
+Nesta versão do TCC, os Repositories concentram consultas de propriedades e safras, incluindo busca por localização, busca por cultura e listagens filtradas pelo usuário. As demais operações devem ser auditadas individualmente para comprovar a coerência entre Controller, Service, Repository e Model na rubrica.
 
 ### UsuarioRepository
 
@@ -497,13 +538,13 @@ A busca por nome existe internamente, com referência à Procedure `sp_buscar_us
 
 Arquivo: `backend/repositories/propriedade_repository.py`.
 
-Possui uma implementação de `buscar_por_localizacao`. A rota autenticada atual usa filtro SQLAlchemy diretamente no Controller e deve ser refatorada para seguir o fluxo de camadas exigido na disciplina.
+Implementa consulta por localização com filtro pelo usuário. A rota autenticada chama `BuscarPropriedadePorLocalizacaoService`, que delega a busca ao Repository.
 
 ### SafraRepository
 
 Arquivo: `backend/repositories/safra_repository.py`.
 
-Possui `buscar_por_cultura`, incluindo referência à Procedure `sp_buscar_safras_cultura`; a rota da API atualmente utiliza SQLAlchemy no Controller para aplicar o filtro da conta.
+Implementa busca por cultura, além da listagem de safras vinculadas à conta. A rota utiliza `BuscarSafraPorCulturaService`, que consulta o Repository com filtro por usuário. Há referência legada à Procedure `sp_buscar_safras_cultura`, não instalada por padrão.
 
 ### AnaliseAvancadaRepository
 
@@ -705,23 +746,81 @@ python -c "import secrets; print(secrets.token_urlsafe(48))"
 
 Se estiver usando MySQL local do XAMPP com `root` sem senha **somente em desenvolvimento**, a URL poderá ser `mysql+pymysql://root:@127.0.0.1:3306/agrorisk`. Em ambiente público, configure um usuário exclusivo e senha forte.
 
-Execute o Flask:
+### Execução em dois servidores (versão TCC)
+
+A versão para a rubrica utiliza **dois terminais Python** e mantém as mesmas páginas e dados do AgroRisk. Os comandos abaixo podem ser executados manualmente, mesmo se o PowerShell bloquear arquivos `.ps1`.
+
+**Terminal 1 — API Flask na porta 5000:** dentro da pasta `backend`, com o MySQL ligado e o `.env` local configurado:
 
 ```powershell
+$env:AGRORISK_API_ONLY = "1"
+$env:FLASK_DEBUG = "False"
 python app.py
 ```
 
-Abra o endereço:
+**Terminal 2 — frontend na porta 5500:** abra um **novo** PowerShell na raiz do projeto (a pasta que contém `backend/` e `frontend/`):
 
-```text
-http://127.0.0.1:5000
+```powershell
+$env:AGRORISK_BACKEND_URL = "http://127.0.0.1:5000"
+python frontend/server.py
 ```
 
-Após autenticar, o Dashboard fica em `http://127.0.0.1:5000/dashboard.html` e a gestão de safras em `http://127.0.0.1:5000/orientador.html`.
+Acesse o sistema em:
 
-**Linux/macOS:** a ativação do ambiente virtual geralmente usa `source venv/bin/activate`.
+```text
+http://127.0.0.1:5500
+```
+
+Após autenticar, use `http://127.0.0.1:5500/dashboard.html` e `http://127.0.0.1:5500/orientador.html`. Para verificar a API separadamente, consulte `http://127.0.0.1:5000/api`; a API em modo separado não deve entregar as páginas HTML.
+
+**Terminal 3 — Cloudflare Tunnel (opcional):** com os terminais anteriores abertos, execute:
+
+```powershell
+cloudflared tunnel --url http://127.0.0.1:5500
+```
+
+O endereço `trycloudflare.com` é **temporário** e pode mudar a cada nova execução. O MySQL, a API, o frontend, o túnel, o computador e a conexão precisam permanecer ativos para que o acesso funcione. Não publique senhas, credenciais nem `backend/.env`.
+
+**Atalhos disponíveis na raiz:** `INICIAR_API.ps1`, `INICIAR_FRONTEND.ps1` e `INICIAR_CLOUDFLARE.ps1`. Se o Windows bloquear scripts não assinados, use os comandos manuais acima em vez de mudar permanentemente a política de execução.
+
+**Compatibilidade com a versão anterior:** se iniciar apenas `python app.py` dentro de `backend` **sem** `AGRORISK_API_ONLY=1`, o Flask ainda pode servir as páginas e a API na porta 5000. Isso é útil para testes legados, mas **não serve como demonstração da separação obrigatória**.
+
+**Linux/macOS:** a ativação do ambiente virtual geralmente usa `source venv/bin/activate`. A variável de ambiente pode ser definida no shell correspondente, antes de iniciar os dois processos.
 
 > Se o banco for antigo, faça **backup** antes de qualquer atualização de tabelas. O `db.create_all()` cria tabelas faltantes, mas não migra automaticamente colunas existentes.
+
+## Cloudflare Tunnel e link público
+
+Na versão com frontend e API separados, o Cloudflare deve encaminhar as requisições para o **frontend da porta 5500**, e não diretamente para a API da porta 5000:
+
+```text
+Celular / navegador → Cloudflare Tunnel → Frontend :5500 → API :5000 → MySQL
+```
+
+```powershell
+cloudflared tunnel --url http://127.0.0.1:5500
+```
+
+O endereço automático `*.trycloudflare.com` é **temporário**. Para manter o mesmo endereço com um túnel nomeado da Cloudflare, é necessário configurar domínio e rota pública adequados. Um domínio fixo não faz o Flask ou o MySQL rodarem sozinhos: computador e serviços locais ainda devem permanecer ligados.
+
+## Organização do repositório no GitHub
+
+A versão com arquitetura para a rubrica deve ser publicada preferencialmente na branch **`agrorisk-tcc`**, preservando a **`main`** como referência da versão anterior. Na página principal da branch, os diretórios devem aparecer **diretamente na raiz**:
+
+```text
+Agro_risk2.0/
+├── backend/
+├── frontend/
+├── docs/
+├── README.md
+├── .gitignore
+├── INICIAR_API.ps1
+└── INICIAR_FRONTEND.ps1
+```
+
+**Não publique o diretório `AgroRisk_TCC/` como uma pasta extra contendo outra cópia do projeto.** O conteúdo dessa pasta local deve ser colocado na raiz do repositório para que `README.md`, `backend/`, `frontend/` e `docs/` fiquem visíveis de imediato.
+
+**Segurança:** `backend/.env` contém credenciais reais e **não deve ser versionado**. A publicação inclui apenas `backend/.env.example` com valores fictícios. O Cloudflare Tunnel não substitui hospedagem permanente da API e do banco.
 
 ## Banco de dados
 
@@ -758,6 +857,13 @@ python tests/test_orientador_ia.py
 python tests/test_analise_avancada.py
 ```
 
+**Testes adicionais para a versão TCC (com `pytest` e dependências de desenvolvimento):**
+
+```powershell
+python -m pip install -r requirements-dev.txt
+python -m pytest tests/test_separacao_servidores.py tests/test_consultas_repository.py -q
+```
+
 Alguns testes utilizam **SQLite em memória, simulações de API e dados fictícios**. Eles ajudam a revisar o comportamento, mas **não substituem** testes manuais com MySQL, OpenWeather e Gemini reais.
 
 ### Busca de usuários por nome
@@ -774,7 +880,7 @@ GET /usuarios/buscar?nome=Joao
 GET /propriedades/buscar?localizacao=Vespasiano
 ```
 
-A rota atual restringe os resultados à conta, mas contém consulta SQLAlchemy no Controller e precisa de revisão arquitetural.
+A rota filtra os resultados à conta via `BuscarPropriedadePorLocalizacaoService` e `PropriedadeRepository`. É necessário testá-la com duas contas no MySQL para comprovar o isolamento.
 
 ### Busca de safras por cultura
 
@@ -782,7 +888,7 @@ A rota atual restringe os resultados à conta, mas contém consulta SQLAlchemy n
 GET /safras/buscar?cultura=Soja
 ```
 
-A rota atual filtra os dados da conta, mas consulta SQLAlchemy diretamente no Controller.
+A rota filtra os dados da conta usando `BuscarSafraPorCulturaService` e `SafraRepository`. É necessário conferir os resultados com registros reais e o isolamento entre contas.
 
 ### Testes do cadastro, edição e exclusão
 
@@ -802,7 +908,7 @@ Selecionar uma safra, consultar dados complementares, gerar o PDF e conferir ide
 
 ## Tecnologias utilizadas
 
-- **Python e Flask** — backend, rotas HTTP e servidor local da interface.
+- **Python e Flask** — dois processos HTTP: frontend na porta 5500, API na porta 5000; modo legado de servidor único preservado.
 - **Flask-SQLAlchemy / SQLAlchemy / PyMySQL** — Models, transações e acesso ao banco.
 - **MySQL / MariaDB** — persistência de usuários, propriedades, safras e parâmetros opcionais.
 - **python-dotenv** — variáveis privadas de ambiente.
@@ -825,7 +931,7 @@ O domínio principal possui `Usuario`, `Propriedade` e `Safra`, representados co
 docs/diagrama-classes.md
 ```
 
-Veja o [diagrama de classes](docs/diagrama-classes.md). **Atenção:** o desenho existente descreve principalmente as três entidades originais; é necessário revisá-lo para incluir `SafraParametros` e conferir os atributos/relacionamentos antes de apresentá-lo como diagrama completo da versão atual.
+Veja o [diagrama de classes](docs/diagrama-classes.md). Na versão TCC o desenho **já inclui `SafraParametros`** e os relacionamentos das quatro Models. Antes da apresentação, confira se os atributos correspondem à estrutura efetiva do MySQL e se o Mermaid renderiza no GitHub.
 
 ## Segurança do sistema
 
@@ -839,53 +945,58 @@ A implementação atual conta com:
 - Limite simples de requisições de IA no processo do Flask.
 - Cabeçalhos HTTP básicos de proteção e `Cache-Control: no-store` para dados sensíveis.
 
-**Ainda não é uma implantação pública pronta:** faltam HTTPS e servidor de produção, políticas de backup, proteção robusta contra abuso, revisão de permissões em todas as rotas, configuração segura do MySQL e testes completos de integração. O `.env` deve permanecer fora do GitHub. Se alguma chave foi exposta, **revogue-a e gere outra**.
+**Ainda não é uma implantação pública de produção pronta:** o Tunnel fornece HTTPS no endereço público temporário, mas os processos locais, políticas de backup, proteção contra abuso, revisão de permissões, configuração segura do MySQL e testes completos de integração continuam necessários. O `.env` deve permanecer fora do GitHub. Se alguma chave foi exposta, **revogue-a e gere outra**.
 
 ## Conferência para a rubrica
 
-A equipe deve demonstrar **funcionamento real**, além de apresentar o README. A revisão local identifica os seguintes pesos de referência na rubrica recebida:
+A rubrica oficial recebida pela equipe atribui **30 pontos principais** e permite **até 5 pontos de bônus**. Os critérios de arquitetura cliente-servidor (4 pontos) e API em camadas (7 pontos) são obrigatórios: bônus não compensam pontuação perdida nesses requisitos.
 
-| Critério | Pontos | O que conferir |
+| Critério | Pontos | O que conferir na versão TCC |
 |---|---:|---|
-| Quatro fluxos não CRUD | **4** | Demonstrar mapa, clima, janela de colheita e PDF/IA, conforme autorização da banca |
-| Cliente-servidor | **4** | O frontend faz HTTP, mas ainda roda no **mesmo Flask da API** |
-| Controller → Service → Model/Repository | **7** | Conferir a passagem real dos dados em cada fluxo |
-| Persistência / ORM / consultas de Repository | **4** | SQLAlchemy, MySQL e consultas especiais executadas no Repository |
-| Diagrama de classes | **3** | Atualizar conforme as quatro Models da versão atual |
-| Fluxogramas de dados | **4** | Entrada e consulta percorrendo as camadas implementadas |
-| Apresentação e README | **4** | Problema, público, casos de uso, arquitetura, tecnologias e evidências |
+| Quatro fluxos não CRUD | **4** | Demonstrar **quatro funcionalidades de ponta a ponta** em até 2 minutos: mapa/cálculo de área, clima, janela de colheita, PDF ou IA, se funcionarem realmente. |
+| Cliente-servidor | **4** | `frontend/server.py` em **5500**, API `backend/app.py` em **5000**, processos separados e consumo HTTP da API. |
+| Controller → Service → Model/Repository | **7** | Mostrar responsabilidades e uma requisição completa atravessando as camadas, com os dados corretos. |
+| Persistência / ORM / consultas de Repository | **4** | SQLAlchemy, MySQL, CRUD com ORM e consultas executadas no Repository com resultados corretos. |
+| Diagrama de classes | **3** | Mostrar as quatro Models e seus relacionamentos no `docs/diagrama-classes.md`. |
+| Fluxogramas de dados | **4** | Demonstrar fluxos de entrada e recuperação em `docs/fluxogramas-casos-de-uso.md`, passando por Repository. |
+| Apresentação e README | **4** | Problema e público-alvo, cinco casos de uso com telas, arquitetura/diretórios/tecnologias e README com os casos implementados. |
 
-**Bônus possíveis:** IA como serviço, hospedagem e comprovação do consentimento, sujeitos aos requisitos específicos da atividade. Não se deve considerar bônus garantido apenas porque há uma tela ou integração escrita em código.
+**Bônus possíveis:** IA como serviço (+2), hospedagem com frontend e API acessíveis (+2) e termos de consentimento com decisão registrada (+1). **Total final limitado a 30 pontos**, sem substituição dos critérios obrigatórios.
 
 ### Demonstração sugerida
 
-| Etapa | Funcionalidade | O que mostrar |
+| Tempo | Funcionalidade não CRUD | Evidência ao vivo |
 |---|---|---|
-| 1 | Login e Dashboard | Acesso autenticado e indicadores do painel original |
-| 2 | Propriedades | Cadastro, desenho da área no mapa e persistência no MySQL |
-| 3 | Minha Safra | Cadastro, resumo, estimativa de colheita, edição e exclusão com confirmação |
-| 4 | Monitoramento | Localização da fazenda, dados meteorológicos atuais e previsão |
-| 5 | Relatórios | Informações complementares e PDF gerado no navegador |
-| 6 | Assistente IA | Pergunta ao Gemini com consentimento e dados opcionais |
-| 7 | Arquitetura | Código de Controller, Service, Model/Repository e esquema do banco |
+| 0:00–0:25 | Mapa e demarcação | Delimitar área e obter cálculo no mapa da propriedade. |
+| 0:25–0:50 | Monitoramento climático | Consultar temperatura/previsão de uma propriedade existente. |
+| 0:50–1:15 | Janela de colheita | Selecionar cultura/data e apresentar a estimativa calculada. |
+| 1:15–1:45 | Relatório PDF | Selecionar safra e gerar/abrir o documento com dados reais da demonstração. |
+| 1:45–2:00 | Arquitetura | Mostrar dois servidores ativos e os diretórios de camadas. |
 
-A rubrica mencionou **limite de 2 minutos para a demonstração em vídeo ou sistema hospedado**; confirme com o professor como esse limite se aplica à apresentação presencial. Prepare também um roteiro curto com **quatro fluxos não CRUD**, priorizando o que estiver realmente funcionando.
+Não é necessário mostrar todas as 28 funcionalidades: a avaliação exige quatro **fluxos principais não CRUD** na demonstração. Se um fluxo não estiver funcionando, não o conte. Mantenha uma conta e registros fictícios preparados, evite expor CPF, senhas, tokens e chaves de API.
 
-**Não exponha senhas, tokens, chaves de API, CPFs ou informações privadas reais.** Faça a demonstração com contas e registros de teste e com backup do banco.
+**Documentos da rubrica e apresentação:**
+
+- [Diagrama de classes](docs/diagrama-classes.md)
+- [Fluxogramas dos casos de uso](docs/fluxogramas-casos-de-uso.md)
+- [Guia para slides e demonstração](docs/GUIA-RUBRICA-E-APRESENTACAO.md)
+- [Revisão atualizada da rubrica](docs/RUBRICA_ATUALIZADA_AGRORISK_TCC.md)
+
+A implementação foi preparada para esses critérios; **a pontuação real depende de testes, das evidências demonstradas e da avaliação do professor**.
 
 ## Status atual do projeto
 
 O AgroRisk está em **fase de finalização acadêmica**, com interface e navegação reorganizadas. A versão atual inclui **Dashboard original**, cadastro de propriedades e áreas, **Minha Safra unificada**, consultas de clima e mapa, **Relatórios em PDF**, **Assistente Gemini** e calculadoras complementares.
 
-Na última revisão de interface, o menu lateral foi padronizado e o `index.html` recebeu imagens agrícolas mais apropriadas. O monitoramento mantém a previsão meteorológica sem o gráfico duplicado; a antiga página de Safras foi unificada com Minha Safra.
+Na última revisão de interface, o menu lateral foi padronizado e corrigido para toque no celular, e o `index.html` recebeu imagens agrícolas mais apropriadas. O monitoramento mantém a previsão meteorológica sem o gráfico duplicado; a antiga página de Safras foi unificada com Minha Safra. A versão TCC acrescenta os servidores independentes e os fluxogramas de entrada e recuperação de dados.
 
 ### Pendências para a entrega final
 
 - Validar os fluxos principais em **MySQL real**, com dados de teste e duas contas.
 - Conferir a comunicação ao vivo com **OpenWeather** e **Gemini**, com chaves privadas válidas.
-- Revisar a separação entre **frontend e API**, conforme a rubrica, caso sejam exigidos servidores distintos.
-- Mover as consultas especiais ainda presentes nos Controllers para **Services/Repositories**, mantendo autorização.
-- Atualizar o diagrama de classes e preparar os **fluxogramas** solicitados.
+- **Comprovar a separação de frontend (5500) e API (5000)** com dois terminais e requisições HTTP reais durante a avaliação.
+- Verificar, operação por operação, o fluxo **Controller → Service → Repository → Model**, incluindo buscas e filtros por usuário.
+- Conferir o diagrama de classes e os fluxogramas **já incluídos** com a versão do banco e disponibilizá-los nos slides.
 - Conferir a geração e abertura do PDF final, inclusive quando o clima estiver indisponível.
 - Concluir os slides, a demonstração e a documentação do repositório.
 
