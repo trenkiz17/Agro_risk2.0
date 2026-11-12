@@ -36,7 +36,7 @@ def create_frontend_app():
 
     # Nunca transformar a URL do backend em um destino arbitrario vindo da web.
     backend_url = os.environ.get("AGRORISK_BACKEND_URL", "http://127.0.0.1:5000").rstrip("/")
-    if backend_url not in ("http://127.0.0.1:5000", "http://localhost:5000"):
+    if backend_url not in ("http://127.0.0.1:5000", "http://localhost:5000", "http://127.0.0.1:5001"):
         raise RuntimeError("AGRORISK_BACKEND_URL deve apontar para a API local na porta 5000.")
 
     @app.get("/")
